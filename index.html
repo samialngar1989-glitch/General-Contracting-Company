@@ -1,0 +1,3949 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛣️ نظام شركة هندسة الطرقات</title>
+<meta name="theme-color" content="#2563eb">
+<meta name="description" content="نظام متكامل لإدارة مشاريع الطرق والمعدات والعمال">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --primary: #2563eb; --primary-dark: #1d4ed8;
+  --success: #22c55e; --danger: #ef4444;
+  --warning: #f59e0b; --info: #06b6d4; --gold: #fbbf24;
+  --bg: #f1f5f9; --bg-card: #ffffff; --bg-hover: #f8fafc;
+  --text: #0f172a; --text-muted: #64748b; --border: #e2e8f0;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow: 0 4px 6px rgba(0,0,0,0.07);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+  --radius: 12px; --radius-sm: 8px;
+  --header-h: 65px; --sidebar-w: 260px;
+}
+html[data-theme="dark"] {
+  --bg: #0f172a; --bg-card: #1e293b; --bg-hover: #334155;
+  --text: #f1f5f9; --text-muted: #94a3b8; --border: #334155;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text);
+  min-height: 100vh; transition: background 0.3s, color 0.3s; overflow-x: hidden;
+}
+
+#loginScreen {
+  position: fixed; inset: 0;
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #06b6d4 100%);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; padding: 20px;
+}
+.login-box {
+  background: var(--bg-card); padding: 40px; border-radius: 20px;
+  width: 100%; max-width: 420px; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+  animation: slideUp 0.5s ease;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.login-logo { text-align: center; font-size: 60px; margin-bottom: 15px; }
+.login-title { text-align: center; font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
+.login-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 30px; font-size: 14px; }
+.form-group { margin-bottom: 18px; }
+.form-label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: var(--text); }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 12px 15px; border: 2px solid var(--border);
+  border-radius: var(--radius-sm); font-family: inherit; font-size: 15px;
+  background: var(--bg); color: var(--text); transition: all 0.2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.password-wrapper { position: relative; }
+.password-toggle {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 16px;
+}
+.checkbox-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; cursor: pointer; user-select: none; }
+.checkbox-wrapper input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
+.btn {
+  padding: 12px 20px; border: none; border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--primary); color: #fff; width: 100%; padding: 14px; font-size: 16px; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-auto { width: auto !important; }
+.login-error {
+  background: #fee2e2; color: #991b1b; padding: 12px; border-radius: var(--radius-sm);
+  margin-bottom: 15px; font-size: 14px; text-align: center; display: none;
+}
+.login-error.show { display: block; animation: shake 0.5s; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+.login-footer { text-align: center; margin-top: 25px; font-size: 13px; color: var(--text-muted); }
+
+#app { display: none; }
+#app.active { display: block; }
+.header {
+  position: fixed; top: 0; right: 0; left: 0; height: var(--header-h);
+  background: var(--bg-card); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; z-index: 100; box-shadow: var(--shadow-sm);
+}
+.header-right { display: flex; align-items: center; gap: 15px; }
+.menu-toggle { display: none; background: none; border: none; font-size: 22px; color: var(--text); cursor: pointer; padding: 8px; }
+.header-logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; color: var(--primary); }
+.header-logo i { font-size: 26px; }
+.header-actions { display: flex; align-items: center; gap: 10px; }
+.icon-btn {
+  width: 42px; height: 42px; border-radius: 50%; border: none;
+  background: var(--bg); color: var(--text); cursor: pointer;
+  font-size: 18px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; position: relative;
+}
+.icon-btn:hover { background: var(--primary); color: #fff; transform: translateY(-2px); }
+
+.sidebar {
+  position: fixed; top: var(--header-h); right: 0; bottom: 0;
+  width: var(--sidebar-w); background: var(--bg-card);
+  border-left: 1px solid var(--border); overflow-y: auto;
+  transition: transform 0.3s; z-index: 90;
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.nav-section { padding: 15px 0; border-bottom: 1px solid var(--border); }
+.nav-section-title {
+  padding: 0 20px 8px; font-size: 11px; font-weight: 700;
+  color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 20px; color: var(--text); cursor: pointer;
+  transition: all 0.2s; font-size: 14px; font-weight: 500;
+  border-right: 3px solid transparent;
+}
+.nav-item:hover { background: var(--bg-hover); color: var(--primary); }
+.nav-item.active {
+  background: rgba(37, 99, 235, 0.1); color: var(--primary);
+  border-right-color: var(--primary); font-weight: 700;
+}
+.nav-item i { width: 20px; text-align: center; font-size: 16px; }
+
+.main-content {
+  margin-right: var(--sidebar-w); margin-top: var(--header-h);
+  padding: 25px; min-height: calc(100vh - var(--header-h));
+}
+.page { display: none; animation: fadeIn 0.3s; }
+.page.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 25px; flex-wrap: wrap; gap: 15px;
+}
+.page-title { font-size: 26px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 12px; }
+.page-title i { color: var(--primary); font-size: 28px; }
+
+.stats-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px; margin-bottom: 25px;
+}
+.stat-card {
+  background: var(--bg-card); padding: 22px; border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 18px;
+  border: 1px solid var(--border); transition: all 0.3s; cursor: pointer;
+}
+.stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.stat-icon {
+  width: 60px; height: 60px; border-radius: 14px; display: flex;
+  align-items: center; justify-content: center; font-size: 26px; color: #fff; flex-shrink: 0;
+}
+.stat-icon.blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.stat-icon.green { background: linear-gradient(135deg, #22c55e, #15803d); }
+.stat-icon.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.stat-icon.red { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+.stat-icon.purple { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+.stat-icon.cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+.stat-icon.gold { background: linear-gradient(135deg, #fbbf24, #d97706); }
+.stat-info h3 { font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.stat-info p { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+
+.card {
+  background: var(--bg-card); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); border: 1px solid var(--border);
+  overflow: hidden; margin-bottom: 20px;
+}
+.card-header {
+  padding: 18px 22px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 15px; flex-wrap: wrap;
+}
+.card-title { font-size: 17px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 10px; }
+.card-title i { color: var(--primary); }
+.card-body { padding: 22px; }
+
+.table-wrapper { overflow-x: auto; border-radius: var(--radius); }
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table thead { background: var(--bg); }
+.table th {
+  padding: 14px; text-align: right; font-weight: 700;
+  color: var(--text-muted); font-size: 13px;
+  border-bottom: 2px solid var(--border); white-space: nowrap;
+}
+.table td { padding: 14px; border-bottom: 1px solid var(--border); color: var(--text); }
+.table tbody tr { transition: background 0.2s; }
+.table tbody tr:hover { background: var(--bg-hover); }
+
+.tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.tag-success { background: #dcfce7; color: #166534; }
+.tag-warning { background: #fef3c7; color: #92400e; }
+.tag-danger { background: #fee2e2; color: #991b1b; }
+.tag-info { background: #dbeafe; color: #1e40af; }
+.tag-gray { background: #f1f5f9; color: #475569; }
+html[data-theme="dark"] .tag-success { background: rgba(34,197,94,0.15); color: #4ade80; }
+html[data-theme="dark"] .tag-warning { background: rgba(245,158,11,0.15); color: #fbbf24; }
+html[data-theme="dark"] .tag-danger { background: rgba(239,68,68,0.15); color: #f87171; }
+html[data-theme="dark"] .tag-info { background: rgba(59,130,246,0.15); color: #60a5fa; }
+html[data-theme="dark"] .tag-gray { background: rgba(148,163,184,0.15); color: #cbd5e1; }
+
+.progress-bar { width: 100%; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--primary), #06b6d4);
+  border-radius: 4px; transition: width 0.5s;
+}
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+
+.project-card {
+  background: var(--bg-card); border-radius: var(--radius);
+  border: 1px solid var(--border); padding: 20px;
+  transition: all 0.3s; cursor: pointer;
+}
+.project-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+.project-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 15px; gap: 10px; }
+.project-card-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+.project-card-id { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+.project-card-info { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; font-size: 13px; color: var(--text-muted); }
+.project-card-info span { display: flex; align-items: center; gap: 8px; }
+.project-card-info i { width: 16px; color: var(--primary); }
+
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px); display: none; align-items: center;
+  justify-content: center; z-index: 1000; padding: 20px; overflow-y: auto;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: var(--bg-card); border-radius: var(--radius);
+  width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto;
+  box-shadow: var(--shadow-lg); animation: modalSlide 0.3s; margin: auto;
+}
+@keyframes modalSlide {
+  from { opacity: 0; transform: scale(0.95) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-header {
+  padding: 20px 25px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; background: var(--bg-card); z-index: 10;
+}
+.modal-title { font-size: 19px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 10px; }
+.modal-title i { color: var(--primary); }
+.modal-close {
+  width: 36px; height: 36px; border-radius: 50%; border: none;
+  background: var(--bg); color: var(--text); cursor: pointer;
+  font-size: 18px; transition: all 0.2s;
+}
+.modal-close:hover { background: var(--danger); color: #fff; }
+.modal-body { padding: 25px; }
+.modal-footer {
+  padding: 18px 25px; border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: 10px;
+  position: sticky; bottom: 0; background: var(--bg-card);
+}
+
+.toast-container {
+  position: fixed; bottom: 25px; left: 25px; z-index: 9999;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.toast {
+  background: var(--bg-card); padding: 15px 20px; border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg); border-right: 4px solid var(--primary);
+  display: flex; align-items: center; gap: 12px; min-width: 280px;
+  animation: toastIn 0.3s; font-size: 14px; font-weight: 600;
+}
+.toast.success { border-right-color: var(--success); }
+.toast.error { border-right-color: var(--danger); }
+.toast.warning { border-right-color: var(--warning); }
+.toast.info { border-right-color: var(--info); }
+.toast i { font-size: 20px; }
+.toast.success i { color: var(--success); }
+.toast.error i { color: var(--danger); }
+.toast.warning i { color: var(--warning); }
+.toast.info i { color: var(--info); }
+@keyframes toastIn { from { opacity: 0; transform: translateX(-100%); } to { opacity: 1; transform: translateX(0); } }
+
+.loader {
+  display: inline-block; width: 20px; height: 20px;
+  border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff;
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  display: none; align-items: center; justify-content: center; z-index: 2000;
+}
+.loading-overlay.active { display: flex; }
+.loading-spinner {
+  width: 60px; height: 60px; border: 5px solid rgba(255,255,255,0.3);
+  border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite;
+}
+
+.search-box { position: relative; flex: 1; max-width: 400px; }
+.search-box input {
+  width: 100%; padding: 10px 15px 10px 40px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg); color: var(--text); font-family: inherit; font-size: 14px;
+}
+.search-box i {
+  position: absolute; right: 15px; top: 50%;
+  transform: translateY(-50%); color: var(--text-muted);
+}
+.filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; align-items: center; }
+.filter-row .form-select, .filter-row .form-input { padding: 9px 14px; font-size: 14px; min-width: 150px; }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+.empty-state i { font-size: 60px; margin-bottom: 20px; opacity: 0.3; display: block; }
+.empty-state h3 { font-size: 18px; margin-bottom: 8px; }
+.actions-cell { display: flex; gap: 6px; }
+.btn-icon {
+  width: 34px; height: 34px; border-radius: 8px; border: none;
+  background: var(--bg); color: var(--text); cursor: pointer;
+  font-size: 14px; display: inline-flex; align-items: center;
+  justify-content: center; transition: all 0.2s;
+}
+.btn-icon:hover { transform: translateY(-2px); }
+.btn-icon.edit:hover { background: var(--info); color: #fff; }
+.btn-icon.delete:hover { background: var(--danger); color: #fff; }
+.btn-icon.view:hover { background: var(--primary); color: #fff; }
+.btn-warning { background: var(--warning); color: #fff; }
+.btn-warning:hover { background: #d97706; }
+.settings-info {
+  padding: 12px 15px; border-radius: var(--radius-sm);
+  margin: 15px 0; font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { margin-right: 0; padding: 15px; }
+  .menu-toggle { display: block; }
+  .stats-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .stat-card { padding: 15px; flex-direction: column; text-align: center; gap: 10px; }
+  .stat-icon { width: 50px; height: 50px; font-size: 22px; }
+  .stat-info h3 { font-size: 22px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .page-title { font-size: 20px; }
+  .toast-container { left: 15px; right: 15px; bottom: 15px; }
+  .toast { min-width: auto; }
+}
+@media (max-width: 500px) {
+  .page-title { font-size: 18px; }
+  .stat-info h3 { font-size: 18px; }
+  .card-body { padding: 15px; }
+  .modal-body { padding: 18px; }
+}
+html[dir="ltr"] .sidebar { right: auto; left: 0; border-left: none; border-right: 1px solid var(--border); }
+html[dir="ltr"] .main-content { margin-right: 0; margin-left: var(--sidebar-w); }
+html[dir="ltr"] .nav-item { border-right: none; border-left: 3px solid transparent; }
+html[dir="ltr"] .nav-item.active { border-right: none; border-left-color: var(--primary); }
+html[dir="ltr"] .toast { border-right: none; border-left: 4px solid var(--primary); }
+html[dir="ltr"] .toast.success { border-left-color: var(--success); }
+html[dir="ltr"] .toast.error { border-left-color: var(--danger); }
+html[dir="ltr"] .toast.warning { border-left-color: var(--warning); }
+@media (max-width: 900px) {
+  html[dir="ltr"] .sidebar { transform: translateX(-100%); }
+  html[dir="ltr"] .sidebar.open { transform: translateX(0); }
+  html[dir="ltr"] .main-content { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">🛣️</div>
+    <h1 class="login-title" data-i18n="app_full_title">نظام إدارة الطرقات</h1>
+    <p class="login-subtitle" data-i18n="login_subtitle">شركة الهندسة والمقاولات</p>
+    <div class="login-error" id="loginError"></div>
+    <form id="loginForm">
+      <div class="form-group">
+        <label class="form-label" data-i18n="password">كلمة المرور</label>
+        <div class="password-wrapper">
+          <input type="password" class="form-input" id="passwordInput" placeholder="••••••••" autocomplete="current-password" required>
+          <button type="button" class="password-toggle" id="togglePassword"><i class="fas fa-eye"></i></button>
+        </div>
+      </div>
+      <label class="checkbox-wrapper">
+        <input type="checkbox" id="rememberMe">
+        <span data-i18n="remember_me">تذكرني لمدة 30 يوماً</span>
+      </label>
+      <button type="submit" class="btn btn-primary" id="loginBtn">
+        <i class="fas fa-sign-in-alt"></i><span data-i18n="login">دخول</span>
+      </button>
+    </form>
+    <div class="login-footer"><span data-i18n="version">الإصدار</span> 4.0.1 © 2026</div>
+  </div>
+</div>
+
+<div id="app">
+  <header class="header">
+    <div class="header-right">
+      <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+      <div class="header-logo"><i class="fas fa-road"></i><span data-i18n="app_title">نظام الطرقات</span></div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="langBtn" title="Language"><i class="fas fa-globe"></i></button>
+      <button class="icon-btn" id="themeBtn" title="Theme"><i class="fas fa-moon"></i></button>
+      <button class="icon-btn" id="refreshBtn" title="Refresh"><i class="fas fa-sync-alt"></i></button>
+      <button class="icon-btn" id="logoutBtn" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </header>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-section">
+      <div class="nav-section-title">📋 التسجيل اليومي</div>
+      <div class="nav-item" data-page="daily-equip"><i class="fas fa-truck-monster"></i><span>سجل المعدات اليومي</span></div>
+      <div class="nav-item" data-page="daily-workers"><i class="fas fa-user-clock"></i><span>سجل العمال اليومي</span></div>
+      <div class="nav-item" data-page="material-supply"><i class="fas fa-truck-loading"></i><span>توريد المواد</span></div>
+      <div class="nav-item" data-page="fuel"><i class="fas fa-gas-pump"></i><span>المحروقات</span></div>
+      <div class="nav-item" data-page="purchases"><i class="fas fa-shopping-cart"></i><span>المشتريات</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-i18n="main">الرئيسية</div>
+      <div class="nav-item active" data-page="dashboard"><i class="fas fa-chart-line"></i><span data-i18n="dashboard">لوحة التحكم</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-i18n="projects_section">المشاريع</div>
+      <div class="nav-item" data-page="projects"><i class="fas fa-road"></i><span data-i18n="projects">المشاريع</span></div>
+      <div class="nav-item" data-page="sites"><i class="fas fa-map-marked-alt"></i><span data-i18n="sites">المواقع</span></div>
+      <div class="nav-item" data-page="progress"><i class="fas fa-tasks"></i><span data-i18n="progress">الإنجاز</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-i18n="resources_section">الموارد</div>
+      <div class="nav-item" data-page="equipment"><i class="fas fa-truck-monster"></i><span data-i18n="equipment">المعدات</span></div>
+      <div class="nav-item" data-page="maintenance"><i class="fas fa-tools"></i><span data-i18n="maintenance">الصيانة</span></div>
+      <div class="nav-item" data-page="workers"><i class="fas fa-hard-hat"></i><span data-i18n="workers">العمال</span></div>
+      <div class="nav-item" data-page="attendance"><i class="fas fa-calendar-check"></i><span data-i18n="attendance">الحضور</span></div>
+      <div class="nav-item" data-page="materials"><i class="fas fa-boxes"></i><span data-i18n="materials">المواد</span></div>
+      <div class="nav-item" data-page="suppliers"><i class="fas fa-handshake"></i><span data-i18n="suppliers">الموردين</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-i18n="finance_section">المالية</div>
+      <div class="nav-item" data-page="invoices"><i class="fas fa-file-invoice-dollar"></i><span data-i18n="invoices">الفواتير</span></div>
+      <div class="nav-item" data-page="expenses"><i class="fas fa-money-bill-wave"></i><span data-i18n="expenses">المصروفات</span></div>
+      <div class="nav-item" data-page="consolidated-expenses"><i class="fas fa-coins"></i><span>المصروفات الموحدة</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-i18n="quality_section">الجودة والسلامة</div>
+      <div class="nav-item" data-page="safety"><i class="fas fa-shield-alt"></i><span data-i18n="safety">السلامة</span></div>
+      <div class="nav-item" data-page="quality"><i class="fas fa-clipboard-check"></i><span data-i18n="quality">الجودة</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-i18n="reports_section">التقارير</div>
+      <div class="nav-item" data-page="reports"><i class="fas fa-chart-pie"></i><span data-i18n="reports">التقارير</span></div>
+      <div class="nav-item" data-page="settings"><i class="fas fa-cog"></i><span data-i18n="settings">الإعدادات</span></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- ═══ لوحة التحكم ═══ -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-chart-line"></i><span data-i18n="dashboard">لوحة التحكم</span></h1>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-road"></i></div>
+          <div class="stat-info"><h3 id="statProjects">0</h3><p data-i18n="total_projects">إجمالي المشاريع</p></div></div>
+        <div class="stat-card"><div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-info"><h3 id="statActiveProjects">0</h3><p data-i18n="active_projects">مشاريع نشطة</p></div></div>
+        <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-truck-monster"></i></div>
+          <div class="stat-info"><h3 id="statEquipment">0</h3><p data-i18n="equipment_working">معدات تعمل</p></div></div>
+        <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-hard-hat"></i></div>
+          <div class="stat-info"><h3 id="statWorkers">0</h3><p data-i18n="workers_present">عمال حاضرون</p></div></div>
+        <div class="stat-card"><div class="stat-icon cyan"><i class="fas fa-money-bill-trend-up"></i></div>
+          <div class="stat-info"><h3 id="statRevenue">0</h3><p data-i18n="revenue">الإيرادات</p></div></div>
+        <div class="stat-card"><div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+          <div class="stat-info"><h3 id="statLowStock">0</h3><p data-i18n="low_stock">مواد منخفضة</p></div></div>
+        <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-chart-line"></i></div>
+          <div class="stat-info"><h3 id="statProfit">0</h3><p data-i18n="profit">الأرباح</p></div></div>
+        <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-shield-alt"></i></div>
+          <div class="stat-info"><h3 id="statSafety">0</h3><p data-i18n="safety_reports">تقارير السلامة</p></div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><div class="card-header">
+          <h3 class="card-title"><i class="fas fa-chart-line"></i><span data-i18n="monthly_revenue">الإيرادات الشهرية</span></h3>
+        </div><div class="card-body"><canvas id="chartMonthly" height="200"></canvas></div></div>
+        <div class="card"><div class="card-header">
+          <h3 class="card-title"><i class="fas fa-chart-pie"></i><span data-i18n="projects_status">حالات المشاريع</span></h3>
+        </div><div class="card-body"><canvas id="chartProjects" height="200"></canvas></div></div>
+        <div class="card"><div class="card-header">
+          <h3 class="card-title"><i class="fas fa-boxes"></i><span data-i18n="materials_stock">مخزون المواد</span></h3>
+        </div><div class="card-body"><canvas id="chartMaterials" height="200"></canvas></div></div>
+        <div class="card"><div class="card-header">
+          <h3 class="card-title"><i class="fas fa-money-bill-wave"></i><span data-i18n="expenses_category">المصروفات حسب الفئة</span></h3>
+        </div><div class="card-body"><canvas id="chartExpenses" height="200"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- ═══ المشاريع ═══ -->
+    <div class="page" id="page-projects">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-road"></i><span data-i18n="projects">المشاريع</span></h1>
+        <button class="btn btn-primary btn-auto" onclick="openProjectModal()"><i class="fas fa-plus"></i><span data-i18n="add_project">مشروع جديد</span></button>
+      </div>
+      <div class="filter-row">
+        <div class="search-box"><input type="text" id="searchProjects" placeholder="🔍 ابحث..."><i class="fas fa-search"></i></div>
+        <select class="form-select" id="filterProjectStatus">
+          <option value="">كل الحالات</option>
+          <option value="تخطيط">تخطيط</option>
+          <option value="قيد التنفيذ">قيد التنفيذ</option>
+          <option value="مكتمل">مكتمل</option>
+          <option value="متوقف">متوقف</option>
+        </select>
+      </div>
+      <div class="grid-3" id="projectsGrid"></div>
+    </div>
+
+    <!-- ═══ المواقع ═══ -->
+    <div class="page" id="page-sites">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-map-marked-alt"></i><span data-i18n="sites">المواقع</span></h1>
+        <button class="btn btn-primary btn-auto" onclick="openSiteModal()"><i class="fas fa-plus"></i><span data-i18n="add_site">موقع جديد</span></button>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>الاسم</th><th>المشروع</th><th>من كم</th><th>إلى كم</th>
+            <th>الطول</th><th>الحالة</th><th>المشرف</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="sitesTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ المعدات ═══ -->
+    <div class="page" id="page-equipment">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-truck-monster"></i><span data-i18n="equipment">المعدات</span></h1>
+        <button class="btn btn-primary btn-auto" onclick="openEquipmentModal()"><i class="fas fa-plus"></i><span data-i18n="add_equipment">معدة جديدة</span></button>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>الاسم</th><th>النوع</th><th>الموديل</th><th>اللوحة</th>
+            <th>الحالة</th><th>الموقع</th><th>المشغل</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="equipmentTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ العمال ═══ -->
+    <div class="page" id="page-workers">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-hard-hat"></i><span data-i18n="workers">العمال</span></h1>
+        <button class="btn btn-primary btn-auto" onclick="openWorkerModal()"><i class="fas fa-plus"></i><span data-i18n="add_worker">عامل جديد</span></button>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>الاسم</th><th>الوظيفة</th><th>الجوال</th>
+            <th>الراتب</th><th>الحالة</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="workersTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ المواد ═══ -->
+    <div class="page" id="page-materials">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-boxes"></i><span data-i18n="materials">المواد</span></h1>
+        <button class="btn btn-primary btn-auto" onclick="openMaterialModal()"><i class="fas fa-plus"></i><span data-i18n="add_material">مادة جديدة</span></button>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>الاسم</th><th>الوحدة</th><th>السعر</th>
+            <th>المخزون</th><th>الحد الأدنى</th><th>المورد</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="materialsTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ الفواتير ═══ -->
+    <div class="page" id="page-invoices">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-file-invoice-dollar"></i><span data-i18n="invoices">الفواتير</span></h1>
+        <button class="btn btn-primary btn-auto" onclick="openInvoiceModal()"><i class="fas fa-plus"></i><span data-i18n="add_invoice">فاتورة جديدة</span></button>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>التاريخ</th><th>النوع</th><th>الجهة</th>
+            <th>المبلغ</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th>
+          </tr></thead>
+          <tbody id="invoicesTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ الصيانة ═══ -->
+    <div class="page" id="page-maintenance">
+      <div class="page-header"><h1 class="page-title"><i class="fas fa-tools"></i><span data-i18n="maintenance">الصيانة</span></h1></div>
+      <div class="empty-state"><i class="fas fa-tools"></i><h3 data-i18n="no_data">لا توجد بيانات</h3></div>
+    </div>
+
+    <!-- ═══ الحضور ═══ -->
+    <div class="page" id="page-attendance">
+      <div class="page-header"><h1 class="page-title"><i class="fas fa-calendar-check"></i><span data-i18n="attendance">الحضور</span></h1></div>
+      <div class="empty-state"><i class="fas fa-calendar-check"></i><h3 data-i18n="no_data">لا توجد بيانات</h3></div>
+    </div>
+
+    <!-- ═══ الموردين ═══ -->
+    <div class="page" id="page-suppliers">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-handshake"></i><span>الموردون</span></h1>
+        <button class="btn btn-primary btn-auto" onclick="openSupplierModal()"><i class="fas fa-plus"></i> مورد جديد</button>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>الاسم</th><th>النوع</th><th>جهة الاتصال</th>
+            <th>الهاتف</th><th>الرصيد</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="suppliersTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ المصروفات ═══ -->
+    <div class="page" id="page-expenses">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-money-bill-wave"></i><span>المصروفات</span></h1>
+        <button class="btn btn-primary btn-auto" onclick="openExpenseModal()"><i class="fas fa-plus"></i> مصروف جديد</button>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>التاريخ</th><th>الفئة</th><th>الوصف</th>
+            <th>المبلغ</th><th>دفع بواسطة</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="expensesTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ السلامة ═══ -->
+    <div class="page" id="page-safety">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-shield-alt"></i><span>السلامة</span></h1>
+        <button class="btn btn-primary btn-auto" onclick="openSafetyModal()"><i class="fas fa-plus"></i> تقرير سلامة</button>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>التاريخ</th><th>النوع</th><th>الوصف</th>
+            <th>الخطورة</th><th>المسؤول</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="safetyTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ الجودة ═══ -->
+    <div class="page" id="page-quality">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-clipboard-check"></i><span>الجودة</span></h1>
+        <button class="btn btn-primary btn-auto" onclick="openQualityModal()"><i class="fas fa-plus"></i> فحص جودة</button>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>التاريخ</th><th>نوع الفحص</th><th>المشروع</th>
+            <th>النتيجة</th><th>الحالة</th><th>المهندس</th>
+          </tr></thead>
+          <tbody id="qualityTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ الإنجاز ═══ -->
+    <div class="page" id="page-progress">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-tasks"></i><span>تقارير الإنجاز</span></h1>
+        <button class="btn btn-primary btn-auto" onclick="openProgressModal()"><i class="fas fa-plus"></i> تقرير إنجاز</button>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>التاريخ</th><th>المشروع</th><th>الموقع</th>
+            <th>الطبقة</th><th>كم منجز</th><th>المشرف</th>
+          </tr></thead>
+          <tbody id="progressTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ سجل المعدات اليومي ═══ -->
+    <div class="page" id="page-daily-equip">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-truck-monster"></i> سجل المعدات اليومي</h1>
+        <button class="btn btn-primary btn-auto" onclick="openDailyEquipModal()"><i class="fas fa-plus"></i> تسجيل جديد</button>
+      </div>
+      <div class="filter-row">
+        <div class="form-group" style="margin:0;"><input type="date" class="form-input" id="filterEquipDate" onchange="loadDailyEquipLog()"></div>
+        <select class="form-select" id="filterEquipProject" onchange="loadDailyEquipLog()"><option value="">كل المشاريع</option></select>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>التاريخ</th><th>المعدة</th><th>الموقع</th><th>الوقت</th><th>ساعات</th>
+            <th>ديزل (ل)</th><th>كم</th><th>الكمية</th><th>العمل</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="dailyEquipTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ سجل العمال اليومي ═══ -->
+    <div class="page" id="page-daily-workers">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-user-clock"></i> سجل العمال اليومي</h1>
+        <button class="btn btn-primary btn-auto" onclick="openDailyWorkerModal()"><i class="fas fa-plus"></i> تسجيل جديد</button>
+      </div>
+      <div class="filter-row">
+        <div class="form-group" style="margin:0;"><input type="date" class="form-input" id="filterWorkerDate" onchange="loadDailyWorkersLog()"></div>
+        <select class="form-select" id="filterWorkerProject" onchange="loadDailyWorkersLog()"><option value="">كل المشاريع</option></select>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>التاريخ</th><th>العامل</th><th>الوظيفة</th><th>الموقع</th><th>الحضور</th>
+            <th>ساعات</th><th>إضافي</th><th>اليومية</th><th>العمل</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="dailyWorkersTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ توريد المواد ═══ -->
+    <div class="page" id="page-material-supply">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-truck-loading"></i> توريد المواد</h1>
+        <button class="btn btn-primary btn-auto" onclick="openMaterialSupplyModal()"><i class="fas fa-plus"></i> توريد جديد</button>
+      </div>
+      <div class="filter-row">
+        <div class="form-group" style="margin:0;"><input type="date" class="form-input" id="filterSupplyDate" onchange="loadMaterialSupply()"></div>
+        <select class="form-select" id="filterSupplyProject" onchange="loadMaterialSupply()"><option value="">كل المشاريع</option></select>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>التاريخ</th><th>المادة</th><th>من موقع</th><th>إلى موقع</th>
+            <th>عدد الزفات</th><th>حجم الزفة</th><th>الكمية</th><th>الوحدة</th>
+            <th>السائق</th><th>التكلفة</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="materialSupplyTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ المحروقات ═══ -->
+    <div class="page" id="page-fuel">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-gas-pump"></i> المحروقات اليومية</h1>
+        <button class="btn btn-primary btn-auto" onclick="openFuelModal()"><i class="fas fa-plus"></i> تسجيل جديد</button>
+      </div>
+      <div class="filter-row">
+        <div class="form-group" style="margin:0;"><input type="date" class="form-input" id="filterFuelDate" onchange="loadFuelLog()"></div>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>التاريخ</th><th>المعدة</th><th>النوع</th><th>الكمية (لتر)</th>
+            <th>سعر اللتر</th><th>الإجمالي</th><th>المحطة</th><th>رقم الإيصال</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="fuelTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ المشتريات ═══ -->
+    <div class="page" id="page-purchases">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-shopping-cart"></i> المشتريات اليومية</h1>
+        <button class="btn btn-primary btn-auto" onclick="openPurchaseModal()"><i class="fas fa-plus"></i> مشترى جديد</button>
+      </div>
+      <div class="filter-row">
+        <div class="form-group" style="margin:0;"><input type="date" class="form-input" id="filterPurchaseDate" onchange="loadPurchases()"></div>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>التاريخ</th><th>الصنف</th><th>الفئة</th><th>الكمية</th><th>السعر</th>
+            <th>الإجمالي</th><th>المورد</th><th>المدفوع</th><th>المتبقي</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="purchasesTable"></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- ═══ المصروفات الموحدة ═══ -->
+    <div class="page" id="page-consolidated-expenses">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-coins"></i> المصروفات الموحدة</h1>
+        <button class="btn btn-warning btn-auto" onclick="rebuildExpenses()">
+          <i class="fas fa-sync-alt"></i> إعادة تجميع
+        </button>
+      </div>
+      <div class="stats-grid" id="expenseStats">
+        <div class="stat-card"><div class="stat-icon red"><i class="fas fa-gas-pump"></i></div>
+          <div class="stat-info"><h3 id="statFuelCost">0</h3><p>محروقات</p></div></div>
+        <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-users"></i></div>
+          <div class="stat-info"><h3 id="statWagesCost">0</h3><p>رواتب عمال</p></div></div>
+        <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-boxes"></i></div>
+          <div class="stat-info"><h3 id="statMaterialsCost">0</h3><p>مواد موردة</p></div></div>
+        <div class="stat-card"><div class="stat-icon cyan"><i class="fas fa-shopping-cart"></i></div>
+          <div class="stat-info"><h3 id="statPurchasesCost">0</h3><p>مشتريات</p></div></div>
+        <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-hand-holding-usd"></i></div>
+          <div class="stat-info"><h3 id="statManualCost">0</h3><p>مصروفات يدوية</p></div></div>
+        <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-calculator"></i></div>
+          <div class="stat-info"><h3 id="statGrandTotal">0</h3><p>الإجمالي</p></div></div>
+      </div>
+      <div class="filter-row">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">من تاريخ</label>
+          <input type="date" class="form-input" id="consoFrom" onchange="loadConsolidatedExpenses()">
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">إلى تاريخ</label>
+          <input type="date" class="form-input" id="consoTo" onchange="loadConsolidatedExpenses()">
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">النوع</label>
+          <select class="form-select" id="consoType" onchange="loadConsolidatedExpenses()">
+            <option value="">الكل</option>
+            <option value="وقود">محروقات</option>
+            <option value="عمال">رواتب</option>
+            <option value="مواد">مواد</option>
+            <option value="مشتريات">مشتريات</option>
+            <option value="يدوي">يدوي</option>
+          </select>
+        </div>
+      </div>
+      <div class="card"><div class="table-wrapper">
+        <table class="table">
+          <thead><tr>
+            <th>#</th><th>التاريخ</th><th>النوع</th><th>الوصف</th>
+            <th>الفئة</th><th>المبلغ</th><th>المشروع</th>
+          </tr></thead>
+          <tbody id="consolidatedExpensesTable"></tbody>
+        </table>
+      </div>
+      <div style="padding:15px;background:var(--bg-hover);text-align:center;font-weight:800;font-size:16px;">
+        💰 الإجمالي: <span id="consoTotal" style="color:var(--danger);">0 ر.ي</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- ═══ التقارير ═══ -->
+    <div class="page" id="page-reports">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-chart-pie"></i><span>التقارير</span></h1>
+      </div>
+      <div class="filter-row">
+        <select class="form-select" id="reportType">
+          <option value="daily">تقرير يومي</option>
+          <option value="weekly">تقرير أسبوعي</option>
+          <option value="monthly">تقرير شهري</option>
+          <option value="yearly">تقرير سنوي</option>
+        </select>
+        <select class="form-select" id="reportEntity">
+          <option value="all">الكل</option>
+          <option value="projects">المشاريع</option>
+          <option value="equipment">المعدات</option>
+          <option value="workers">العمال</option>
+          <option value="materials">المواد</option>
+        </select>
+        <button class="btn btn-primary btn-auto" onclick="generateReport()"><i class="fas fa-search"></i> إنشاء التقرير</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3 class="card-title"><i class="fas fa-chart-bar"></i> نتيجة التقرير</h3></div>
+        <div class="card-body" id="reportContent">
+          <div class="empty-state"><i class="fas fa-chart-pie"></i><h3>اختر نوع التقرير ثم اضغط "إنشاء التقرير"</h3></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ الإعدادات ═══ -->
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-cog"></i><span data-i18n="settings">الإعدادات</span></h1>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3 class="card-title"><i class="fas fa-gas-pump"></i> أسعار المحروقات الحالية</h3></div>
+        <div class="card-body">
+          <div class="grid-3" style="gap:15px">
+            <div class="form-group">
+              <label class="form-label">سعر لتر الديزل (ر.ي) *</label>
+              <input type="number" class="form-input" id="setDieselPrice" value="2000" step="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">سعر لتر البنزين (ر.ي) *</label>
+              <input type="number" class="form-input" id="setPetrolPrice" value="2500" step="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">سعر لتر الزيت (ر.ي)</label>
+              <input type="number" class="form-input" id="setOilPrice" value="5000" step="1">
+            </div>
+          </div>
+          <div class="settings-info" style="background:rgba(34,197,94,0.1);">
+            <i class="fas fa-info-circle"></i>
+            <strong>ملاحظة:</strong> السعر الجديد يُطبّق على التسجيلات الجديدة فقط. السجلات القديمة تحتفظ بسعرها القديم.
+          </div>
+          <button class="btn btn-primary btn-auto" onclick="saveFuelPrices()">
+            <i class="fas fa-save"></i> حفظ أسعار المحروقات
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════ نافذة المشروع ═══════════ -->
+<div class="modal-overlay" id="projectModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-road"></i><span id="projectModalTitle">مشروع جديد</span></h2>
+      <button class="modal-close" onclick="closeModalById('projectModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="projectId">
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">اسم المشروع *</label><input type="text" class="form-input" id="proj_name" placeholder="طريق صنعاء - عدن"></div>
+        <div class="form-group"><label class="form-label">الجهة المالكة *</label><input type="text" class="form-input" id="proj_client" placeholder="وزارة الأشغال"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">الموقع *</label><input type="text" class="form-input" id="proj_location" placeholder="صنعاء"></div>
+        <div class="form-group"><label class="form-label">نوع الطريق</label>
+          <select class="form-select" id="proj_roadType">
+            <option value="سريع">طريق سريع</option>
+            <option value="رئيسي" selected>طريق رئيسي</option>
+            <option value="فرعي">طريق فرعي</option>
+            <option value="ترابي">طريق ترابي</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">الطول (كم)</label><input type="number" class="form-input" id="proj_length" step="0.1" placeholder="45"></div>
+        <div class="form-group"><label class="form-label">العرض (م)</label><input type="number" class="form-input" id="proj_roadWidth" step="0.1" placeholder="7.5"></div>
+        <div class="form-group"><label class="form-label">قيمة العقد</label><input type="number" class="form-input" id="proj_contractValue" placeholder="850000000"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">تاريخ البداية</label><input type="date" class="form-input" id="proj_startDate"></div>
+        <div class="form-group"><label class="form-label">تاريخ الانتهاء</label><input type="date" class="form-input" id="proj_endDate"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">مدير المشروع</label><input type="text" class="form-input" id="proj_manager" placeholder="م. أحمد"></div>
+        <div class="form-group"><label class="form-label">المهندس المسؤول</label><input type="text" class="form-input" id="proj_engineer" placeholder="م. سامي"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">الحالة</label>
+          <select class="form-select" id="proj_status">
+            <option value="تخطيط">تخطيط</option>
+            <option value="قيد التنفيذ" selected>قيد التنفيذ</option>
+            <option value="مكتمل">مكتمل</option>
+            <option value="متوقف">متوقف</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">نسبة الإنجاز (%)</label><input type="number" class="form-input" id="proj_progress" min="0" max="100" value="0"></div>
+      </div>
+      <div class="form-group"><label class="form-label">الوصف</label><textarea class="form-textarea" id="proj_description" rows="3"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('projectModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveProject()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة المعدات ═══════════ -->
+<div class="modal-overlay" id="equipmentModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-truck-monster"></i><span id="equipmentModalTitle">إضافة معدة جديدة</span></h2>
+      <button class="modal-close" onclick="closeModalById('equipmentModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="equipId">
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">اسم المعدة *</label><input type="text" class="form-input" id="equip_name" placeholder="حفار كوماتسو"></div>
+        <div class="form-group"><label class="form-label">النوع *</label>
+          <select class="form-select" id="equip_type">
+            <option value="حفار">حفار</option><option value="لودر">لودر</option>
+            <option value="مدحلة">مدحلة</option><option value="جرافة">جرافة</option>
+            <option value="شاحنة">شاحنة</option><option value="باكهو">باكهو</option>
+            <option value="فينيشر">فينيشر (رصف)</option><option value="خلاطة">خلاطة أسفلت</option>
+            <option value="أخرى">أخرى</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">الموديل</label><input type="text" class="form-input" id="equip_model" placeholder="PC300"></div>
+        <div class="form-group"><label class="form-label">رقم اللوحة</label><input type="text" class="form-input" id="equip_plateNumber" placeholder="أ ب ج 1234"></div>
+        <div class="form-group"><label class="form-label">سنة الصنع</label><input type="number" class="form-input" id="equip_year" placeholder="2020"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">الحالة *</label>
+          <select class="form-select" id="equip_status">
+            <option value="يعمل" selected>يعمل</option>
+            <option value="صيانة">صيانة</option>
+            <option value="متوقف">متوقف</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">الموقع الحالي</label><input type="text" class="form-input" id="equip_currentSite" placeholder="S-002 أو ورشة"></div>
+      </div>
+      <div class="form-group"><label class="form-label">المشغل</label><input type="text" class="form-input" id="equip_operator" placeholder="علي محمد"></div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">تاريخ الشراء</label><input type="date" class="form-input" id="equip_purchaseDate"></div>
+        <div class="form-group"><label class="form-label">سعر الشراء (ر.ي)</label><input type="number" class="form-input" id="equip_purchasePrice" placeholder="250000000"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">آخر صيانة</label><input type="date" class="form-input" id="equip_lastMaintenance"></div>
+        <div class="form-group"><label class="form-label">الصيانة القادمة</label><input type="date" class="form-input" id="equip_nextMaintenance"></div>
+      </div>
+      <div class="form-group"><label class="form-label">ملاحظات</label><textarea class="form-textarea" id="equip_notes" rows="3"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('equipmentModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveEquipment()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة العمال ═══════════ -->
+<div class="modal-overlay" id="workerModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-hard-hat"></i><span id="workerModalTitle">إضافة عامل جديد</span></h2>
+      <button class="modal-close" onclick="closeModalById('workerModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="workerId">
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">الاسم الكامل *</label><input type="text" class="form-input" id="worker_name" placeholder="أحمد محمد علي"></div>
+        <div class="form-group"><label class="form-label">رقم الهوية</label><input type="text" class="form-input" id="worker_nationalId" placeholder="1234567890"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">الوظيفة *</label>
+          <select class="form-select" id="worker_job">
+            <option value="">اختر الوظيفة</option>
+            <optgroup label="👔 الإدارة والهندسة">
+              <option value="مدير المشروع">مدير المشروع</option>
+              <option value="مهندس المشروع">مهندس المشروع</option>
+              <option value="مهندس موقع">مهندس موقع</option>
+              <option value="مهندس سلامة">مهندس سلامة</option>
+              <option value="مهندس كميات">مهندس كميات</option>
+              <option value="مهندس إنشاءات">مهندس إنشاءات</option>
+              <option value="مهندس مواد">مهندس مواد</option>
+              <option value="مهندس جودة">مهندس جودة</option>
+              <option value="مشرف ردميات">مشرف ردميات</option>
+              <option value="مشرف قطوعات">مشرف قطوعات</option>
+            </optgroup>
+            <optgroup label="🚜 السائقون والمشغلون">
+              <option value="سائق لودر">سائق لودر</option>
+              <option value="سائق جريدر">سائق جريدر</option>
+              <option value="سائق كسارة">سائق كسارة</option>
+              <option value="سائق دركتر">سائق دركتر</option>
+              <option value="سائق قلاب">سائق قلاب</option>
+              <option value="سائق بوزة">سائق بوزة</option>
+              <option value="سائق راصف">سائق راصف</option>
+              <option value="سائق قاطرة">سائق قاطرة</option>
+              <option value="سائق شاحنة">سائق شاحنة</option>
+              <option value="سائق دينة">سائق دينة</option>
+              <option value="سائق سيارة">سائق سيارة</option>
+              <option value="سائق">سائق</option>
+            </optgroup>
+            <optgroup label="🔧 الفنيون والعمال">
+              <option value="فني">فني</option>
+              <option value="مساعد فني">مساعد فني</option>
+              <option value="عامل بناء">عامل بناء</option>
+              <option value="عامل سلامة">عامل سلامة</option>
+              <option value="عامل حماية">عامل حماية</option>
+              <option value="عامل عادي">عامل عادي</option>
+              <option value="عامل">عامل</option>
+              <option value="جنايني">جنايني</option>
+            </optgroup>
+            <optgroup label="📋 وظائف أخرى">
+              <option value="واسخ">واسخ</option>
+              <option value="مشتريات">مشتريات</option>
+              <option value="حجروف">حجروف</option>
+              <option value="طباخ">طباخ</option>
+              <option value="محاسب">محاسب</option>
+              <option value="إداري">إداري</option>
+              <option value="أخرى">أخرى</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">رقم الجوال *</label><input type="tel" class="form-input" id="worker_phone" placeholder="777111222"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">الراتب الشهري (ر.ي)</label><input type="number" class="form-input" id="worker_salary" placeholder="400000"></div>
+        <div class="form-group"><label class="form-label">الراتب اليومي (ر.ي) *</label><input type="number" class="form-input" id="worker_dailyWage" placeholder="15000"></div>
+      </div>
+      <div class="form-group"><label class="form-label">تاريخ الالتحاق</label><input type="date" class="form-input" id="worker_joinDate"></div>
+      <div class="form-group"><label class="form-label">الحالة</label>
+        <select class="form-select" id="worker_status">
+          <option value="يعمل" selected>يعمل</option>
+          <option value="إجازة">إجازة</option>
+          <option value="منتهي">منتهي</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('workerModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveWorker()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة المواد ═══════════ -->
+<div class="modal-overlay" id="materialModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-boxes"></i><span id="materialModalTitle">إضافة مادة جديدة</span></h2>
+      <button class="modal-close" onclick="closeModalById('materialModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="matId">
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">اسم المادة *</label><input type="text" class="form-input" id="mat_name" placeholder="أسفلت"></div>
+        <div class="form-group"><label class="form-label">الوحدة *</label>
+          <select class="form-select" id="mat_unit">
+            <option value="طن">طن</option><option value="م³">متر مكعب</option>
+            <option value="م²">متر مربع</option><option value="م">متر طولي</option>
+            <option value="قطعة">قطعة</option><option value="كيس">كيس</option>
+            <option value="زفة">زفة</option><option value="لتر">لتر</option>
+            <option value="جالون">جالون</option><option value="شوال">شوال</option>
+            <option value="رحلة">رحلة</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">السعر للوحدة *</label><input type="number" class="form-input" id="mat_price" placeholder="85000"></div>
+        <div class="form-group"><label class="form-label">المخزون الحالي</label><input type="number" class="form-input" id="mat_stock" value="0"></div>
+        <div class="form-group"><label class="form-label">الحد الأدنى *</label><input type="number" class="form-input" id="mat_minStock" placeholder="100"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">المورد</label><input type="text" class="form-input" id="mat_supplier" placeholder="شركة النفط"></div>
+        <div class="form-group"><label class="form-label">موقع المخزن</label><input type="text" class="form-input" id="mat_location" placeholder="مخزن رئيسي"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('materialModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveMaterial()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة الفواتير ═══════════ -->
+<div class="modal-overlay" id="invoiceModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-file-invoice-dollar"></i><span id="invoiceModalTitle">إضافة فاتورة</span></h2>
+      <button class="modal-close" onclick="closeModalById('invoiceModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="invId">
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">النوع *</label>
+          <select class="form-select" id="inv_type">
+            <option value="مستخلص">مستخلص (للجهة المالكة)</option>
+            <option value="مورد">فاتورة مورد</option>
+            <option value="مصروف">مصروف</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">التاريخ *</label><input type="date" class="form-input" id="inv_date"></div>
+      </div>
+      <div class="form-group"><label class="form-label">المشروع</label>
+        <select class="form-select" id="inv_projectId"><option value="">بدون مشروع</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">الجهة *</label><input type="text" class="form-input" id="inv_party" placeholder="وزارة الأشغال / شركة النفط"></div>
+      <div class="form-group"><label class="form-label">الوصف</label><textarea class="form-textarea" id="inv_description" rows="2"></textarea></div>
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">المبلغ (ر.ي) *</label><input type="number" class="form-input" id="inv_amount" oninput="calcInvoiceRemaining()"></div>
+        <div class="form-group"><label class="form-label">المدفوع (ر.ي)</label><input type="number" class="form-input" id="inv_paid" value="0" oninput="calcInvoiceRemaining()"></div>
+        <div class="form-group"><label class="form-label">المتبقي (ر.ي)</label><input type="number" class="form-input" id="inv_remaining" readonly style="background:var(--bg-hover);"></div>
+      </div>
+      <div class="form-group"><label class="form-label">تاريخ الاستحقاق</label><input type="date" class="form-input" id="inv_dueDate"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('invoiceModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveInvoice()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة المواقع ═══════════ -->
+<div class="modal-overlay" id="siteModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-map-marked-alt"></i><span id="siteModalTitle">إضافة موقع جديد</span></h2>
+      <button class="modal-close" onclick="closeModalById('siteModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="siteId">
+      <div class="form-group"><label class="form-label">المشروع *</label>
+        <select class="form-select" id="site_projectId"><option value="">اختر المشروع</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">اسم المقطع *</label><input type="text" class="form-input" id="site_name" placeholder="المقطع الأول"></div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">من كم *</label><input type="number" class="form-input" id="site_fromKm" step="0.1" placeholder="0"></div>
+        <div class="form-group"><label class="form-label">إلى كم *</label><input type="number" class="form-input" id="site_toKm" step="0.1" placeholder="15"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">الحالة</label>
+          <select class="form-select" id="site_status">
+            <option value="تخطيط">تخطيط</option>
+            <option value="قيد التنفيذ" selected>قيد التنفيذ</option>
+            <option value="مكتمل">مكتمل</option>
+            <option value="متوقف">متوقف</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">المشرف</label><input type="text" class="form-input" id="site_supervisor" placeholder="م. ياسر"></div>
+      </div>
+      <div class="form-group"><label class="form-label">ملاحظات</label><textarea class="form-textarea" id="site_notes" rows="2"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('siteModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveSite()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة سجل المعدات اليومي ═══════════ -->
+<div class="modal-overlay" id="dailyEquipModal">
+  <div class="modal" style="max-width:900px">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-truck-monster"></i><span id="dailyEquipTitle">تسجيل عمل معدة</span></h2>
+      <button class="modal-close" onclick="closeModalById('dailyEquipModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="delLogId">
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">التاريخ *</label><input type="date" class="form-input" id="del_date"></div>
+        <div class="form-group"><label class="form-label">المعدة *</label>
+          <select class="form-select" id="del_equipId" onchange="fillEquipOperator()"><option value="">اختر المعدة</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">المشروع *</label>
+          <select class="form-select" id="del_projectId"><option value="">اختر المشروع</option></select>
+        </div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">الموقع</label><input type="text" class="form-input" id="del_siteId" placeholder="S-002"></div>
+        <div class="form-group"><label class="form-label">المشغل</label><input type="text" class="form-input" id="del_operator" placeholder="علي محمد"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">وقت البداية</label><input type="time" class="form-input" id="del_startTime" value="07:00"></div>
+        <div class="form-group"><label class="form-label">وقت النهاية</label><input type="time" class="form-input" id="del_endTime" value="17:00"></div>
+      </div>
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">كمية الديزل (لتر)</label><input type="number" class="form-input" id="del_dieselQty" step="0.01" oninput="calcDieselCost()"></div>
+        <div class="form-group"><label class="form-label">تكلفة الديزل (ر.ي)</label><input type="number" class="form-input" id="del_dieselCost" step="0.01"></div>
+        <div class="form-group"><label class="form-label">الكم منجز (كم)</label><input type="number" class="form-input" id="del_workedKm" step="0.01"></div>
+      </div>
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">الكمية المنجزة</label><input type="number" class="form-input" id="del_workedQty" step="0.01"></div>
+        <div class="form-group"><label class="form-label">الوحدة</label>
+          <select class="form-select" id="del_unit">
+            <option value="م²">م²</option><option value="م³">م³</option>
+            <option value="م">م</option><option value="طن">طن</option>
+            <option value="زفة">زفة</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">المشرف</label><input type="text" class="form-input" id="del_supervisor" placeholder="م. ياسر"></div>
+      </div>
+      <div class="form-group"><label class="form-label">وصف العمل</label><textarea class="form-textarea" id="del_workDescription" rows="2"></textarea></div>
+      <div class="form-group"><label class="form-label">ملاحظات</label><input type="text" class="form-input" id="del_notes"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('dailyEquipModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveDailyEquipLog()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة سجل العمال اليومي ═══════════ -->
+<div class="modal-overlay" id="dailyWorkerModal">
+  <div class="modal" style="max-width:900px">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-user-clock"></i><span id="dailyWorkerTitle">تسجيل عمل عامل</span></h2>
+      <button class="modal-close" onclick="closeModalById('dailyWorkerModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="dwlLogId">
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">التاريخ *</label><input type="date" class="form-input" id="dwl_date"></div>
+        <div class="form-group"><label class="form-label">العامل *</label>
+          <select class="form-select" id="dwl_workerId" onchange="fillWorkerJob()"><option value="">اختر العامل</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">الوظيفة</label><input type="text" class="form-input" id="dwl_job" readonly style="background:var(--bg-hover);"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">المشروع *</label>
+          <select class="form-select" id="dwl_projectId"><option value="">اختر المشروع</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">الموقع</label><input type="text" class="form-input" id="dwl_siteId" placeholder="S-002"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">الحضور</label>
+          <select class="form-select" id="dwl_attendance">
+            <option value="حاضر">حاضر</option>
+            <option value="غائب">غائب</option>
+            <option value="إجازة">إجازة</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">اليومية (ر.ي)</label><input type="number" class="form-input" id="dwl_dailyWage" step="0.01"></div>
+      </div>
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">وقت الحضور</label><input type="time" class="form-input" id="dwl_checkIn" value="07:00"></div>
+        <div class="form-group"><label class="form-label">وقت الانصراف</label><input type="time" class="form-input" id="dwl_checkOut" value="17:00"></div>
+        <div class="form-group"><label class="form-label">الساعات الإضافية</label><input type="number" class="form-input" id="dwl_overtime" value="0"></div>
+      </div>
+      <div class="form-group"><label class="form-label">وصف العمل</label><input type="text" class="form-input" id="dwl_workDescription"></div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">المشرف</label><input type="text" class="form-input" id="dwl_supervisor" placeholder="م. ياسر"></div>
+        <div class="form-group"><label class="form-label">ملاحظات</label><input type="text" class="form-input" id="dwl_notes"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('dailyWorkerModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveDailyWorkersLog()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة توريد المواد ═══════════ -->
+<div class="modal-overlay" id="materialSupplyModal">
+  <div class="modal" style="max-width:900px">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-truck-loading"></i><span id="materialSupplyTitle">توريد مادة</span></h2>
+      <button class="modal-close" onclick="closeModalById('materialSupplyModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="msSupplyId">
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">التاريخ *</label><input type="date" class="form-input" id="ms_date"></div>
+        <div class="form-group"><label class="form-label">المادة *</label>
+          <select class="form-select" id="ms_matId" onchange="fillMaterialName()"><option value="">اختر المادة</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">الوحدة</label><input type="text" class="form-input" id="ms_unit" readonly style="background:var(--bg-hover);"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">من موقع (المصدر)</label><input type="text" class="form-input" id="ms_fromLocation" placeholder="كسارة الجبل"></div>
+        <div class="form-group"><label class="form-label">إلى مشروع *</label>
+          <select class="form-select" id="ms_toProjectId"><option value="">اختر المشروع</option></select>
+        </div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">إلى موقع</label><input type="text" class="form-input" id="ms_toSiteId" placeholder="S-002"></div>
+        <div class="form-group"><label class="form-label">المورد</label>
+          <select class="form-select" id="ms_supplierId"><option value="">اختر المورد</option></select>
+        </div>
+      </div>
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">عدد الزفات *</label><input type="number" class="form-input" id="ms_zafatCount" oninput="calcSupplyTotal()"></div>
+        <div class="form-group"><label class="form-label">حجم الزفة</label><input type="number" class="form-input" id="ms_zafaSize" oninput="calcSupplyTotal()"></div>
+        <div class="form-group"><label class="form-label">الكمية الإجمالية</label><input type="number" class="form-input" id="ms_totalQuantity" readonly style="background:var(--bg-hover);font-weight:800;color:var(--success);"></div>
+      </div>
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">السائق</label><input type="text" class="form-input" id="ms_driverName"></div>
+        <div class="form-group"><label class="form-label">رقم الشاحنة</label><input type="text" class="form-input" id="ms_truckNumber"></div>
+        <div class="form-group"><label class="form-label">التكلفة (ر.ي)</label><input type="number" class="form-input" id="ms_cost"></div>
+      </div>
+      <div class="form-group"><label class="form-label">ملاحظات</label><input type="text" class="form-input" id="ms_notes"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('materialSupplyModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveMaterialSupply()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة المحروقات ═══════════ -->
+<div class="modal-overlay" id="fuelModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-gas-pump"></i><span id="fuelTitle">تسجيل محروقات</span></h2>
+      <button class="modal-close" onclick="closeModalById('fuelModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="flFuelId">
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">التاريخ *</label><input type="date" class="form-input" id="fl_date"></div>
+        <div class="form-group"><label class="form-label">المعدة/السيارة *</label>
+          <select class="form-select" id="fl_equipId"><option value="">اختر</option></select>
+        </div>
+      </div>
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">نوع الوقود</label>
+          <select class="form-select" id="fl_fuelType">
+            <option value="ديزل">ديزل</option>
+            <option value="بنزين">بنزين</option>
+            <option value="زيت">زيت</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">الكمية (لتر) *</label><input type="number" class="form-input" id="fl_quantity" oninput="calcFuelTotal()"></div>
+        <div class="form-group"><label class="form-label">سعر اللتر</label><input type="number" class="form-input" id="fl_pricePerLiter" value="2000" oninput="calcFuelTotal()"></div>
+      </div>
+      <div class="form-group"><label class="form-label">الإجمالي (ر.ي)</label><input type="number" class="form-input" id="fl_totalCost" readonly style="background:var(--bg-hover);font-weight:800;color:var(--success);font-size:18px;"></div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">المحطة</label><input type="text" class="form-input" id="fl_location" placeholder="محطة النور"></div>
+        <div class="form-group"><label class="form-label">رقم الإيصال</label><input type="text" class="form-input" id="fl_receiptNumber"></div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">السائق</label><input type="text" class="form-input" id="fl_driver"></div>
+        <div class="form-group"><label class="form-label">ملاحظات</label><input type="text" class="form-input" id="fl_notes"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('fuelModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveFuelLog()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة المشتريات ═══════════ -->
+<div class="modal-overlay" id="purchaseModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-shopping-cart"></i><span id="purchaseTitle">مشترى جديد</span></h2>
+      <button class="modal-close" onclick="closeModalById('purchaseModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="purPurchaseId">
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">التاريخ *</label><input type="date" class="form-input" id="pur_date"></div>
+        <div class="form-group"><label class="form-label">المورد</label>
+          <select class="form-select" id="pur_supplierId"><option value="">اختر المورد</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">اسم الصنف *</label><input type="text" class="form-input" id="pur_itemName"></div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">الفئة</label>
+          <select class="form-select" id="pur_category">
+            <option value="قطع غيار">قطع غيار</option><option value="زيوت">زيوت</option>
+            <option value="أدوات">أدوات</option><option value="مواد بناء">مواد بناء</option>
+            <option value="قرطاسية">قرطاسية</option><option value="كهربائيات">كهربائيات</option>
+            <option value="أخرى">أخرى</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">الوحدة</label><input type="text" class="form-input" id="pur_unit" placeholder="قطعة، لتر..."></div>
+      </div>
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">الكمية *</label><input type="number" class="form-input" id="pur_quantity" oninput="calcPurchaseTotal()"></div>
+        <div class="form-group"><label class="form-label">السعر *</label><input type="number" class="form-input" id="pur_price" oninput="calcPurchaseTotal()"></div>
+        <div class="form-group"><label class="form-label">الإجمالي</label><input type="number" class="form-input" id="pur_totalCost" readonly style="background:var(--bg-hover);font-weight:800;color:var(--success);"></div>
+      </div>
+      <div class="grid-3" style="gap:15px">
+        <div class="form-group"><label class="form-label">رقم الفاتورة</label><input type="text" class="form-input" id="pur_invoiceNumber"></div>
+        <div class="form-group"><label class="form-label">المدفوع</label><input type="number" class="form-input" id="pur_paid" value="0"></div>
+        <div class="form-group"><label class="form-label">المتبقي</label><input type="number" class="form-input" id="pur_remaining" readonly style="background:var(--bg-hover);"></div>
+      </div>
+      <div class="form-group"><label class="form-label">ملاحظات</label><input type="text" class="form-input" id="pur_notes"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('purchaseModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="savePurchase()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة تأكيد الحذف ═══════════ -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-exclamation-triangle" style="color:var(--warning)"></i><span>تأكيد الحذف</span></h2>
+      <button class="modal-close" onclick="closeModalById('confirmModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p id="confirmMessage" style="font-size:15px;line-height:1.7;">هل أنت متأكد من الحذف؟</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('confirmModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn" id="confirmBtn" style="background:var(--danger);color:#fff;"><i class="fas fa-trash"></i> حذف</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة الموردين ═══════════ -->
+<div class="modal-overlay" id="supplierModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-handshake"></i><span id="supplierModalTitle">مورد جديد</span></h2>
+      <button class="modal-close" onclick="closeModalById('supplierModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="supId">
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">اسم المورد *</label><input type="text" class="form-input" id="sup_name" placeholder="شركة النفط"></div>
+        <div class="form-group"><label class="form-label">النوع</label>
+          <select class="form-select" id="sup_type">
+            <option value="مواد">مواد</option><option value="معدات">معدات</option>
+            <option value="خدمات">خدمات</option><option value="وقود">وقود</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">جهة الاتصال</label><input type="text" class="form-input" id="sup_contact"></div>
+        <div class="form-group"><label class="form-label">رقم الهاتف *</label><input type="tel" class="form-input" id="sup_phone"></div>
+      </div>
+      <div class="form-group"><label class="form-label">العنوان</label><input type="text" class="form-input" id="sup_address"></div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">الرصيد الحالي</label><input type="number" class="form-input" id="sup_balance" value="0"></div>
+        <div class="form-group"><label class="form-label">ملاحظات</label><input type="text" class="form-input" id="sup_notes"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('supplierModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveSupplier()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة المصروفات ═══════════ -->
+<div class="modal-overlay" id="expenseModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-money-bill-wave"></i><span id="expenseModalTitle">مصروف جديد</span></h2>
+      <button class="modal-close" onclick="closeModalById('expenseModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="expId">
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">التاريخ *</label><input type="date" class="form-input" id="exp_date"></div>
+        <div class="form-group"><label class="form-label">الفئة *</label>
+          <select class="form-select" id="exp_category">
+            <option value="وقود">وقود</option><option value="رواتب">رواتب</option>
+            <option value="صيانة">صيانة</option><option value="مواد">مواد</option>
+            <option value="إيجار">إيجار</option><option value="كهرباء">كهرباء وماء</option>
+            <option value="اتصالات">اتصالات</option><option value="نقل">نقل وشحن</option>
+            <option value="أخرى">أخرى</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">المشروع</label>
+        <select class="form-select" id="exp_projectId"><option value="">بدون مشروع</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">الوصف *</label><textarea class="form-textarea" id="exp_description" rows="2"></textarea></div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">المبلغ (ر.ي) *</label><input type="number" class="form-input" id="exp_amount"></div>
+        <div class="form-group"><label class="form-label">دفع بواسطة</label><input type="text" class="form-input" id="exp_paidBy"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('expenseModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveExpense()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة السلامة ═══════════ -->
+<div class="modal-overlay" id="safetyModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-shield-alt"></i><span id="safetyModalTitle">تقرير سلامة</span></h2>
+      <button class="modal-close" onclick="closeModalById('safetyModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="safId">
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">التاريخ *</label><input type="date" class="form-input" id="saf_date"></div>
+        <div class="form-group"><label class="form-label">النوع *</label>
+          <select class="form-select" id="saf_type">
+            <option value="تفتيش">تفتيش دوري</option><option value="حادث">حادث</option>
+            <option value="تدريب">تدريب</option><option value="مخالفة">مخالفة</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">المشروع</label>
+        <select class="form-select" id="saf_projectId"><option value="">بدون مشروع</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">الوصف *</label><textarea class="form-textarea" id="saf_description" rows="2"></textarea></div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">درجة الخطورة</label>
+          <select class="form-select" id="saf_severity">
+            <option value="منخفض">منخفض</option><option value="متوسط">متوسط</option>
+            <option value="عالي">عالي</option><option value="حرج">حرج</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">المسؤول</label><input type="text" class="form-input" id="saf_responsible"></div>
+      </div>
+      <div class="form-group"><label class="form-label">الإجراء المتخذ</label><textarea class="form-textarea" id="saf_action" rows="2"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('safetyModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveSafety()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة الجودة ═══════════ -->
+<div class="modal-overlay" id="qualityModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-clipboard-check"></i><span>فحص جودة</span></h2>
+      <button class="modal-close" onclick="closeModalById('qualityModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="qtyId">
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">التاريخ *</label><input type="date" class="form-input" id="qty_date"></div>
+        <div class="form-group"><label class="form-label">نوع الفحص *</label>
+          <select class="form-select" id="qty_testType">
+            <option value="كثافة الأسفلت">كثافة الأسفلت</option>
+            <option value="سماكة الطبقة">سماكة الطبقة</option>
+            <option value="الانحدار">الانحدار</option>
+            <option value="الاستقامة">الاستقامة</option>
+            <option value="الحدل">درجة الحدل</option>
+            <option value="مواد الأساس">جودة مواد الأساس</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">المشروع *</label>
+        <select class="form-select" id="qty_projectId"><option value="">اختر المشروع</option></select>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">النتيجة *</label><input type="text" class="form-input" id="qty_result" placeholder="98.5%"></div>
+        <div class="form-group"><label class="form-label">الحالة *</label>
+          <select class="form-select" id="qty_status">
+            <option value="مطابق">مطابق</option>
+            <option value="غير مطابق">غير مطابق</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">المهندس</label><input type="text" class="form-input" id="qty_engineer"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('qualityModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveQuality()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ نافذة الإنجاز ═══════════ -->
+<div class="modal-overlay" id="progressModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-tasks"></i><span>تقرير إنجاز</span></h2>
+      <button class="modal-close" onclick="closeModalById('progressModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="prgId">
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">التاريخ *</label><input type="date" class="form-input" id="prg_date"></div>
+        <div class="form-group"><label class="form-label">المشروع *</label>
+          <select class="form-select" id="prg_projectId"><option value="">اختر المشروع</option></select>
+        </div>
+      </div>
+      <div class="grid-2" style="gap:15px">
+        <div class="form-group"><label class="form-label">الطبقة *</label>
+          <select class="form-select" id="prg_layer">
+            <option value="أساس">طبقة الأساس</option>
+            <option value="رصف">طبقة الرصف</option>
+            <option value="سطح">الطبقة السطحية</option>
+            <option value="تحضير">تحضير وتسوية</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">كم منجز *</label><input type="number" class="form-input" id="prg_workedKm" step="0.01"></div>
+      </div>
+      <div class="form-group"><label class="form-label">المشرف *</label><input type="text" class="form-input" id="prg_supervisor"></div>
+      <div class="form-group"><label class="form-label">ملاحظات</label><textarea class="form-textarea" id="prg_notes" rows="2"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalById('progressModal')" style="background:var(--border);">إلغاء</button>
+      <button class="btn btn-primary btn-auto" onclick="saveProgress()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// ⚙️ الإعدادات — ⚠️ غير هذا الرابط برابط السكريبت الخاص بك
+// ═══════════════════════════════════════════════════════════
+const CONFIG = {
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbw_ww06i56kkV582o7BlZrS6OGS_auzgKM2TgmkHWqAsM5Ix1AuVJkpJNmuX6WM3gc/exec',
+  DEFAULT_LANG: 'ar'
+};
+
+const TRANSLATIONS = {
+  ar: {
+    app_title: 'نظام الطرقات', app_full_title: 'نظام إدارة الطرقات',
+    login_subtitle: 'شركة الهندسة والمقاولات',
+    password: 'كلمة المرور', remember_me: 'تذكرني لمدة 30 يوماً',
+    login: 'دخول', version: 'الإصدار', main: 'الرئيسية',
+    dashboard: 'لوحة التحكم', projects_section: 'المشاريع',
+    projects: 'المشاريع', sites: 'المواقع', progress: 'الإنجاز',
+    resources_section: 'الموارد', equipment: 'المعدات',
+    maintenance: 'الصيانة', workers: 'العمال', attendance: 'الحضور',
+    materials: 'المواد', suppliers: 'الموردين',
+    finance_section: 'المالية', invoices: 'الفواتير', expenses: 'المصروفات',
+    quality_section: 'الجودة والسلامة', safety: 'السلامة', quality: 'الجودة',
+    reports_section: 'التقارير', reports: 'التقارير', settings: 'الإعدادات',
+    total_projects: 'إجمالي المشاريع', active_projects: 'مشاريع نشطة',
+    equipment_working: 'معدات تعمل', workers_present: 'عمال حاضرون',
+    revenue: 'الإيرادات', low_stock: 'مواد منخفضة', profit: 'الأرباح',
+    safety_reports: 'تقارير السلامة', monthly_revenue: 'الإيرادات الشهرية',
+    projects_status: 'حالات المشاريع', materials_stock: 'مخزون المواد',
+    expenses_category: 'المصروفات حسب الفئة',
+    add_project: 'مشروع جديد', add_site: 'موقع جديد',
+    add_equipment: 'معدة جديدة', add_worker: 'عامل جديد',
+    add_material: 'مادة جديدة', add_invoice: 'فاتورة جديدة',
+    save: 'حفظ', cancel: 'إلغاء', edit: 'تعديل', delete: 'حذف',
+    view: 'عرض', search: 'بحث', actions: 'إجراءات', status: 'الحالة',
+    date: 'التاريخ', name: 'الاسم', type: 'النوع', phone: 'الجوال',
+    location: 'الموقع', description: 'الوصف', amount: 'المبلغ',
+    quantity: 'الكمية', price: 'السعر', project: 'المشروع',
+    success: 'تم بنجاح', error: 'حدث خطأ', warning: 'تنبيه',
+    loading: 'جاري التحميل...', no_data: 'لا توجد بيانات',
+    saved_success: 'تم الحفظ بنجاح', deleted_success: 'تم الحذف بنجاح',
+    login_success: 'تم تسجيل الدخول', login_failed: 'كلمة المرور خاطئة',
+    project_name: 'اسم المشروع', client: 'الجهة المالكة',
+    length: 'الطول (كم)', site_name: 'اسم المقطع',
+    from_km: 'من كم', to_km: 'إلى كم', supervisor: 'المشرف',
+    equip_name: 'اسم المعدة', model: 'الموديل', plate: 'رقم اللوحة',
+    operator: 'المشغل', worker_name: 'اسم العامل', job: 'الوظيفة',
+    salary: 'الراتب', material_name: 'اسم المادة', unit: 'الوحدة',
+    stock: 'المخزون', min_stock: 'الحد الأدنى', supplier: 'المورد',
+    party: 'الجهة', paid: 'المدفوع', remaining: 'المتبقي'
+  },
+  en: {
+    app_title: 'Roads System', app_full_title: 'Road Management System',
+    login_subtitle: 'Engineering & Contracting Company',
+    password: 'Password', remember_me: 'Remember me for 30 days',
+    login: 'Login', version: 'Version', main: 'Main',
+    dashboard: 'Dashboard', projects_section: 'Projects',
+    projects: 'Projects', sites: 'Sites', progress: 'Progress',
+    resources_section: 'Resources', equipment: 'Equipment',
+    maintenance: 'Maintenance', workers: 'Workers', attendance: 'Attendance',
+    materials: 'Materials', suppliers: 'Suppliers',
+    finance_section: 'Finance', invoices: 'Invoices', expenses: 'Expenses',
+    quality_section: 'Quality & Safety', safety: 'Safety', quality: 'Quality',
+    reports_section: 'Reports', reports: 'Reports', settings: 'Settings',
+    total_projects: 'Total Projects', active_projects: 'Active Projects',
+    equipment_working: 'Working Equipment', workers_present: 'Present Workers',
+    revenue: 'Revenue', low_stock: 'Low Stock', profit: 'Profit',
+    safety_reports: 'Safety Reports', monthly_revenue: 'Monthly Revenue',
+    projects_status: 'Projects Status', materials_stock: 'Materials Stock',
+    expenses_category: 'Expenses by Category',
+    add_project: 'New Project', add_site: 'New Site',
+    add_equipment: 'New Equipment', add_worker: 'New Worker',
+    add_material: 'New Material', add_invoice: 'New Invoice',
+    save: 'Save', cancel: 'Cancel', edit: 'Edit', delete: 'Delete',
+    view: 'View', search: 'Search', actions: 'Actions', status: 'Status',
+    date: 'Date', name: 'Name', type: 'Type', phone: 'Phone',
+    location: 'Location', description: 'Description', amount: 'Amount',
+    quantity: 'Quantity', price: 'Price', project: 'Project',
+    success: 'Success', error: 'Error', warning: 'Warning',
+    loading: 'Loading...', no_data: 'No data available',
+    saved_success: 'Saved successfully', deleted_success: 'Deleted successfully',
+    login_success: 'Logged in successfully', login_failed: 'Wrong password',
+    project_name: 'Project Name', client: 'Client',
+    length: 'Length (km)', site_name: 'Site Name',
+    from_km: 'From km', to_km: 'To km', supervisor: 'Supervisor',
+    equip_name: 'Equipment Name', model: 'Model', plate: 'Plate Number',
+    operator: 'Operator', worker_name: 'Worker Name', job: 'Job',
+    salary: 'Salary', material_name: 'Material Name', unit: 'Unit',
+    stock: 'Stock', min_stock: 'Min Stock', supplier: 'Supplier',
+    party: 'Party', paid: 'Paid', remaining: 'Remaining'
+  }
+};
+
+let currentLang = localStorage.getItem('road_lang') || 'ar';
+let token = localStorage.getItem('road_token') || '';
+let projectsData = [];
+let sitesData = [];
+let equipmentData = [];
+let workersData = [];
+let materialsData = [];
+let invoicesData = [];
+let suppliersData = [];
+let expensesData = [];
+let safetyData = [];
+let qualityData = [];
+let progressData = [];
+let dailyEquipData = [];
+let dailyWorkersData = [];
+let supplyData = [];
+let fuelData = [];
+let purchasesData = [];
+let consoExpensesData = [];
+let charts = {};
+
+function t(key) { return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) || key; }
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (val !== key) el.textContent = val;
+  });
+}
+
+function switchLang() {
+  currentLang = currentLang === 'ar' ? 'en' : 'ar';
+  localStorage.setItem('road_lang', currentLang);
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+  applyTranslations();
+  showToast(currentLang === 'ar' ? 'تم تبديل اللغة' : 'Language switched', 'success');
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const password = document.getElementById('passwordInput').value;
+  const remember = document.getElementById('rememberMe').checked;
+  const btn = document.getElementById('loginBtn');
+  const errorEl = document.getElementById('loginError');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loader"></span>';
+  const result = await apiPost('login', { password, remember });
+
+  if (result.success && result.token) {
+    token = result.token;
+    localStorage.setItem('road_token', token);
+    errorEl.classList.remove('show');
+    showApp();
+    showToast(t('login_success'), 'success');
+  } else {
+    errorEl.textContent = result.error || t('login_failed');
+    errorEl.classList.add('show');
+    btn.disabled = false;
+    btn.innerHTML = `<i class="fas fa-sign-in-alt"></i> <span>${t('login')}</span>`;
+  }
+}
+
+function logout() {
+  if (!confirm(currentLang === 'ar' ? 'هل تريد الخروج؟' : 'Logout?')) return;
+  token = '';
+  localStorage.removeItem('road_token');
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').classList.add('active');
+  loadDashboard();
+  loadProjects();
+}
+
+async function apiGet(action, params = {}) {
+  try {
+    const query = new URLSearchParams({ action, token, ...params });
+    const res = await fetch(`${CONFIG.SCRIPT_URL}?${query}`);
+    return await res.json();
+  } catch (e) {
+    console.error('API Error:', e);
+    return { success: false, error: 'Connection failed' };
+  }
+}
+
+async function apiPost(action, data = {}) {
+  try {
+    const res = await fetch(CONFIG.SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action, token, ...data })
+    });
+    return await res.json();
+  } catch (e) {
+    console.error('API Error:', e);
+    return { success: false, error: 'Connection failed' };
+  }
+}
+
+async function loadDashboard() {
+  const stats = await apiGet('getDashboardStats');
+  if (!stats.success) return;
+  const d = stats.data;
+
+  setText('statProjects', d.projects.total);
+  setText('statActiveProjects', d.projects.active);
+  setText('statEquipment', d.equipment.working);
+  setText('statWorkers', d.workers.present);
+  setText('statRevenue', formatCurrency(d.finance.revenue));
+  setText('statLowStock', d.materials.lowStock);
+  setText('statProfit', formatCurrency(d.finance.profit));
+  setText('statSafety', d.safety.total);
+
+  const chartData = await apiGet('getChartData');
+  if (chartData.success) renderCharts(chartData.data);
+}
+
+function renderCharts(data) {
+  const monthlyCtx = document.getElementById('chartMonthly');
+  if (monthlyCtx) {
+    if (charts.monthly) charts.monthly.destroy();
+    charts.monthly = new Chart(monthlyCtx, {
+      type: 'line',
+      data: { labels: data.monthly.labels,
+        datasets: [{ label: t('revenue'), data: data.monthly.data,
+          borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)',
+          tension: 0.4, fill: true }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+  }
+  const projectsCtx = document.getElementById('chartProjects');
+  if (projectsCtx) {
+    if (charts.projects) charts.projects.destroy();
+    charts.projects = new Chart(projectsCtx, {
+      type: 'doughnut',
+      data: { labels: data.projectsByStatus.labels,
+        datasets: [{ data: data.projectsByStatus.data,
+          backgroundColor: ['#f59e0b', '#22c55e', '#2563eb', '#ef4444'] }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+  const materialsCtx = document.getElementById('chartMaterials');
+  if (materialsCtx) {
+    if (charts.materials) charts.materials.destroy();
+    charts.materials = new Chart(materialsCtx, {
+      type: 'bar',
+      data: { labels: data.materialsStock.labels,
+        datasets: [{ label: t('stock'), data: data.materialsStock.data,
+          backgroundColor: '#06b6d4', borderRadius: 8 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+  }
+  const expensesCtx = document.getElementById('chartExpenses');
+  if (expensesCtx) {
+    if (charts.expenses) charts.expenses.destroy();
+    charts.expenses = new Chart(expensesCtx, {
+      type: 'pie',
+      data: { labels: data.expensesByCategory.labels,
+        datasets: [{ data: data.expensesByCategory.data,
+          backgroundColor: ['#2563eb', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'] }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// المشاريع
+// ═══════════════════════════════════════════════════════════
+async function loadProjects() {
+  const res = await apiGet('getProjects');
+  if (!res.success) return;
+  projectsData = res.data || [];
+  renderProjects();
+}
+
+function renderProjects() {
+  const grid = document.getElementById('projectsGrid');
+  if (!grid) return;
+  const search = (document.getElementById('searchProjects')?.value || '').toLowerCase();
+  const statusFilter = document.getElementById('filterProjectStatus')?.value || '';
+
+  let filtered = projectsData;
+  if (search) {
+    filtered = filtered.filter(p =>
+      (p.name || '').toLowerCase().includes(search) ||
+      (p.projectId || '').toLowerCase().includes(search)
+    );
+  }
+  if (statusFilter) filtered = filtered.filter(p => p.status === statusFilter);
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+      <i class="fas fa-road"></i><h3>${t('no_data')}</h3></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => `
+    <div class="project-card" onclick="viewProject('${escapeAttr(p.projectId)}')">
+      <div class="project-card-header">
+        <div>
+          <div class="project-card-title">${escapeHtml(p.name)}</div>
+          <div class="project-card-id">${escapeHtml(p.projectId)}</div>
+        </div>
+        ${statusBadge(p.status)}
+      </div>
+      <div class="project-card-info">
+        <span><i class="fas fa-user"></i> ${escapeHtml(p.client)}</span>
+        <span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(p.location)}</span>
+        <span><i class="fas fa-ruler-horizontal"></i> ${p.length || 0} ${currentLang === 'ar' ? 'كم' : 'km'}</span>
+        <span><i class="fas fa-money-bill"></i> ${formatCurrency(p.contractValue)}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width: ${p.progress || 0}%"></div></div>
+      <div style="text-align:center;margin-top:8px;font-size:12px;color:var(--text-muted);font-weight:700;">
+        ${p.progress || 0}% ${currentLang === 'ar' ? 'مكتمل' : 'Complete'}
+      </div>
+    </div>
+  `).join('');
+}
+
+function openProjectModal(projectId) {
+  const modal = document.getElementById('projectModal');
+  const title = document.getElementById('projectModalTitle');
+  if (projectId) {
+    const p = projectsData.find(x => x.projectId === projectId);
+    if (!p) return;
+    title.textContent = currentLang === 'ar' ? 'تعديل المشروع' : 'Edit Project';
+    setValue('projectId', p.projectId); setValue('proj_name', p.name);
+    setValue('proj_client', p.client); setValue('proj_location', p.location);
+    setValue('proj_length', p.length); setValue('proj_roadWidth', p.roadWidth);
+    setValue('proj_roadType', p.roadType); setValue('proj_contractValue', p.contractValue);
+    setValue('proj_startDate', p.startDate); setValue('proj_endDate', p.endDate);
+    setValue('proj_manager', p.manager); setValue('proj_engineer', p.engineer);
+    setValue('proj_status', p.status); setValue('proj_progress', p.progress);
+    setValue('proj_description', p.description);
+  } else {
+    title.textContent = currentLang === 'ar' ? 'مشروع جديد' : 'New Project';
+    document.getElementById('projectId').value = '';
+    ['proj_name','proj_client','proj_location','proj_length','proj_roadWidth',
+     'proj_contractValue','proj_startDate','proj_endDate','proj_manager',
+     'proj_engineer','proj_progress','proj_description'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+  }
+  modal.classList.add('active');
+}
+
+async function saveProject() {
+  const data = {
+    projectId: getValue('projectId'), name: getValue('proj_name'),
+    client: getValue('proj_client'), location: getValue('proj_location'),
+    length: getValue('proj_length'), roadWidth: getValue('proj_roadWidth'),
+    roadType: getValue('proj_roadType'), contractValue: getValue('proj_contractValue'),
+    startDate: getValue('proj_startDate'), endDate: getValue('proj_endDate'),
+    manager: getValue('proj_manager'), engineer: getValue('proj_engineer'),
+    status: getValue('proj_status'), progress: getValue('proj_progress'),
+    description: getValue('proj_description')
+  };
+  if (!data.name || !data.client) {
+    showToast(currentLang === 'ar' ? 'أكمل الحقول المطلوبة' : 'Complete required fields', 'warning');
+    return;
+  }
+  const action = data.projectId ? 'updateProject' : 'addProject';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('projectModal');
+    showToast(t('saved_success'), 'success');
+    loadProjects(); loadDashboard();
+  } else {
+    showToast(result.error || t('error'), 'error');
+  }
+}
+
+function viewProject(projectId) {
+  const p = projectsData.find(x => x.projectId === projectId);
+  if (!p) return;
+  alert(`📁 ${p.name}\n\n📍 الموقع: ${p.location}\n👤 الجهة المالكة: ${p.client}\n📏 الطول: ${p.length} كم\n💰 قيمة العقد: ${formatCurrency(p.contractValue)}\n📊 الإنجاز: ${p.progress}%\n👷 المدير: ${p.manager || '-'}\n🔧 المهندس: ${p.engineer || '-'}`);
+}
+
+function deleteProject(projectId) {
+  showConfirm(currentLang === 'ar' ? 'هل تريد حذف المشروع؟' : 'Delete project?', async () => {
+    const res = await apiPost('deleteProject', { id: projectId });
+    if (res.success) {
+      showToast(t('deleted_success'), 'success');
+      loadProjects(); loadDashboard();
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// التنقل
+// ═══════════════════════════════════════════════════════════
+function navigateTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pageEl = document.getElementById('page-' + page);
+  const navEl = document.querySelector(`.nav-item[data-page="${page}"]`);
+  if (pageEl) pageEl.classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  document.getElementById('sidebar').classList.remove('open');
+
+  const today = new Date().toISOString().split('T')[0];
+  switch (page) {
+    case 'dashboard': loadDashboard(); break;
+    case 'projects': loadProjects(); break;
+    case 'sites': loadSites(); break;
+    case 'equipment': loadEquipment(); break;
+    case 'workers': loadWorkers(); break;
+    case 'materials': loadMaterials(); break;
+    case 'invoices': loadInvoices(); break;
+    case 'suppliers': loadSuppliers(); break;
+    case 'expenses': loadExpenses(); break;
+    case 'safety': loadSafety(); break;
+    case 'quality': loadQuality(); break;
+    case 'progress': loadProgress(); break;
+    case 'reports': break;
+    case 'settings': loadFuelPrices(); break;
+    case 'daily-equip':
+      setValue('filterEquipDate', today);
+      fillProjectFilter('filterEquipProject');
+      loadDailyEquipLog();
+      break;
+    case 'daily-workers':
+      setValue('filterWorkerDate', today);
+      fillProjectFilter('filterWorkerProject');
+      loadDailyWorkersLog();
+      break;
+    case 'material-supply':
+      setValue('filterSupplyDate', today);
+      fillProjectFilter('filterSupplyProject');
+      loadMaterialSupply();
+      break;
+    case 'fuel':
+      setValue('filterFuelDate', today);
+      loadFuelLog();
+      break;
+    case 'purchases':
+      setValue('filterPurchaseDate', today);
+      loadPurchases();
+      break;
+    case 'consolidated-expenses':
+      loadConsolidatedExpenses();
+      break;
+  }
+}
+
+function fillProjectFilter(selectId) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+  const current = select.value;
+  select.innerHTML = '<option value="">كل المشاريع</option>' +
+    projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+  select.value = current;
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('road_theme', isDark ? 'light' : 'dark');
+  document.querySelector('#themeBtn i').className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+  showToast(isDark ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي', 'success');
+}
+
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  const icons = { success: 'fa-check-circle', error: 'fa-times-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+  toast.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i><span>${escapeHtml(message)}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'toastIn 0.3s reverse';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+
+function closeModalById(id) {
+  const modal = document.getElementById(id);
+  if (modal) modal.classList.remove('active');
+}
+
+function showConfirm(message, onConfirm) {
+  const modal = document.getElementById('confirmModal');
+  const msg = document.getElementById('confirmMessage');
+  const btn = document.getElementById('confirmBtn');
+  msg.textContent = message;
+  btn.onclick = () => { closeModalById('confirmModal'); onConfirm(); };
+  modal.classList.add('active');
+}
+
+document.querySelectorAll('.modal-overlay').forEach(modal => {
+  modal.addEventListener('click', e => {
+    if (e.target === modal) modal.classList.remove('active');
+  });
+});
+
+function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+function setValue(id, val) { const el = document.getElementById(id); if (el) el.value = val || ''; }
+function getValue(id) { const el = document.getElementById(id); return el ? el.value : ''; }
+
+function formatCurrency(num) {
+  const n = Number(num) || 0;
+  if (n >= 1000000) return (n / 1000000).toFixed(2) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return n.toLocaleString();
+}
+
+function escapeHtml(str) {
+  return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+function escapeAttr(str) {
+  return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#039;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function statusBadge(status) {
+  const map = {
+    'تخطيط': 'tag-warning', 'قيد التنفيذ': 'tag-info',
+    'مكتمل': 'tag-success', 'متوقف': 'tag-danger',
+    'يعمل': 'tag-success', 'صيانة': 'tag-warning'
+  };
+  return `<span class="tag ${map[status] || 'tag-gray'}">${escapeHtml(status || '')}</span>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// المعدات
+// ═══════════════════════════════════════════════════════════
+async function loadEquipment() {
+  const res = await apiGet('getEquipment');
+  if (!res.success) return;
+  equipmentData = res.data || [];
+  renderEquipment();
+}
+
+function renderEquipment() {
+  const tbody = document.getElementById('equipmentTable');
+  if (!tbody) return;
+  if (equipmentData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:40px; color:var(--text-muted);">
+      <i class="fas fa-truck-monster" style="font-size:40px; opacity:0.3; display:block; margin-bottom:10px;"></i>
+      لا توجد معدات
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = equipmentData.map((e, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td><strong>${escapeHtml(e.name)}</strong></td>
+      <td>${escapeHtml(e.type)}</td>
+      <td>${escapeHtml(e.model || '-')}</td>
+      <td>${escapeHtml(e.plateNumber || '-')}</td>
+      <td>${statusBadge(e.status)}</td>
+      <td>${escapeHtml(e.currentSite || '-')}</td>
+      <td>${escapeHtml(e.operator || '-')}</td>
+      <td class="actions-cell">
+        <button class="btn-icon edit" onclick="openEquipmentModal('${escapeAttr(e.equipId)}')" title="تعديل"><i class="fas fa-edit"></i></button>
+        <button class="btn-icon delete" onclick="deleteEquipment('${escapeAttr(e.equipId)}')" title="حذف"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openEquipmentModal(equipId) {
+  const modal = document.getElementById('equipmentModal');
+  const title = document.getElementById('equipmentModalTitle');
+  if (equipId) {
+    const e = equipmentData.find(x => x.equipId === equipId);
+    if (!e) return;
+    title.textContent = 'تعديل المعدة';
+    setValue('equipId', e.equipId); setValue('equip_name', e.name);
+    setValue('equip_type', e.type); setValue('equip_model', e.model);
+    setValue('equip_plateNumber', e.plateNumber); setValue('equip_year', e.year);
+    setValue('equip_status', e.status); setValue('equip_currentSite', e.currentSite);
+    setValue('equip_operator', e.operator); setValue('equip_purchaseDate', e.purchaseDate);
+    setValue('equip_purchasePrice', e.purchasePrice);
+    setValue('equip_lastMaintenance', e.lastMaintenance);
+    setValue('equip_nextMaintenance', e.nextMaintenance);
+    setValue('equip_notes', e.notes);
+  } else {
+    title.textContent = 'إضافة معدة جديدة';
+    document.getElementById('equipId').value = '';
+    ['equip_name','equip_model','equip_plateNumber','equip_year','equip_currentSite',
+     'equip_operator','equip_purchaseDate','equip_purchasePrice',
+     'equip_lastMaintenance','equip_nextMaintenance','equip_notes'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+  }
+  modal.classList.add('active');
+}
+
+async function saveEquipment() {
+  const data = {
+    equipId: getValue('equipId'), name: getValue('equip_name'),
+    type: getValue('equip_type'), model: getValue('equip_model'),
+    plateNumber: getValue('equip_plateNumber'), year: getValue('equip_year'),
+    status: getValue('equip_status'), currentSite: getValue('equip_currentSite'),
+    operator: getValue('equip_operator'), purchaseDate: getValue('equip_purchaseDate'),
+    purchasePrice: getValue('equip_purchasePrice'),
+    lastMaintenance: getValue('equip_lastMaintenance'),
+    nextMaintenance: getValue('equip_nextMaintenance'),
+    notes: getValue('equip_notes')
+  };
+  if (!data.name || !data.type) { showToast('أكمل الحقول المطلوبة', 'warning'); return; }
+  const action = data.equipId ? 'updateEquipment' : 'addEquipment';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('equipmentModal');
+    showToast(t('saved_success'), 'success');
+    loadEquipment(); loadDashboard();
+  } else {
+    showToast(result.error || t('error'), 'error');
+  }
+}
+
+function deleteEquipment(equipId) {
+  showConfirm('هل تريد حذف هذه المعدة؟', async () => {
+    const res = await apiPost('deleteEquipment', { id: equipId });
+    if (res.success) {
+      showToast(t('deleted_success'), 'success');
+      loadEquipment(); loadDashboard();
+    } else showToast(res.error || t('error'), 'error');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// العمال
+// ═══════════════════════════════════════════════════════════
+async function loadWorkers() {
+  const res = await apiGet('getWorkers');
+  if (!res.success) return;
+  workersData = res.data || [];
+  renderWorkers();
+}
+
+function renderWorkers() {
+  const tbody = document.getElementById('workersTable');
+  if (!tbody) return;
+  if (workersData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:40px; color:var(--text-muted);">
+      <i class="fas fa-hard-hat" style="font-size:40px; opacity:0.3; display:block; margin-bottom:10px;"></i>
+      لا يوجد عمال — اضغط "عامل جديد" للإضافة
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = workersData.map((w, i) => {
+    let icon = 'fa-user';
+    if (w.job && w.job.includes('مدير')) icon = 'fa-user-tie';
+    else if (w.job && w.job.includes('مهندس')) icon = 'fa-user-cog';
+    else if (w.job && w.job.includes('سائق')) icon = 'fa-truck';
+    else if (w.job && w.job.includes('مشرف')) icon = 'fa-clipboard-list';
+    else if (w.job && w.job.includes('فني')) icon = 'fa-tools';
+    else if (w.job && w.job.includes('عامل')) icon = 'fa-hard-hat';
+    else if (w.job && w.job.includes('طباخ')) icon = 'fa-utensils';
+    else if (w.job && w.job.includes('محاسب')) icon = 'fa-calculator';
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td><strong>${escapeHtml(w.name)}</strong></td>
+        <td><span class="tag tag-info"><i class="fas ${icon}"></i> ${escapeHtml(w.job || '')}</span></td>
+        <td>${escapeHtml(w.phone || '-')}</td>
+        <td>${formatCurrency(w.salary)} ر.ي</td>
+        <td>${statusBadge(w.status)}</td>
+        <td class="actions-cell">
+          <button class="btn-icon edit" onclick="openWorkerModal('${escapeAttr(w.workerId)}')" title="تعديل"><i class="fas fa-edit"></i></button>
+          <button class="btn-icon delete" onclick="deleteWorker('${escapeAttr(w.workerId)}')" title="حذف"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function openWorkerModal(workerId) {
+  const modal = document.getElementById('workerModal');
+  const title = document.getElementById('workerModalTitle');
+  if (workerId) {
+    const w = workersData.find(x => x.workerId === workerId);
+    if (!w) return;
+    title.textContent = 'تعديل بيانات العامل';
+    setValue('workerId', w.workerId); setValue('worker_name', w.name);
+    setValue('worker_nationalId', w.nationalId); setValue('worker_job', w.job);
+    setValue('worker_phone', w.phone); setValue('worker_salary', w.salary);
+    setValue('worker_dailyWage', w.dailyWage); setValue('worker_joinDate', w.joinDate);
+    setValue('worker_status', w.status);
+  } else {
+    title.textContent = 'إضافة عامل جديد';
+    document.getElementById('workerId').value = '';
+    ['worker_name','worker_nationalId','worker_job','worker_phone','worker_salary',
+     'worker_dailyWage','worker_joinDate'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    setValue('worker_status', 'يعمل');
+  }
+  modal.classList.add('active');
+}
+
+async function saveWorker() {
+  const data = {
+    workerId: getValue('workerId'), name: getValue('worker_name'),
+    nationalId: getValue('worker_nationalId'), job: getValue('worker_job'),
+    phone: getValue('worker_phone'), salary: getValue('worker_salary'),
+    dailyWage: getValue('worker_dailyWage'), joinDate: getValue('worker_joinDate'),
+    status: getValue('worker_status')
+  };
+  if (!data.name || !data.job || !data.phone) { showToast('أكمل الحقول المطلوبة', 'warning'); return; }
+  const action = data.workerId ? 'updateWorker' : 'addWorker';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('workerModal');
+    showToast(t('saved_success'), 'success');
+    loadWorkers(); loadDashboard();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+function deleteWorker(workerId) {
+  showConfirm('هل تريد حذف هذا العامل؟', async () => {
+    const res = await apiPost('deleteWorker', { id: workerId });
+    if (res.success) {
+      showToast(t('deleted_success'), 'success');
+      loadWorkers(); loadDashboard();
+    } else showToast(res.error || t('error'), 'error');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// المواد
+// ═══════════════════════════════════════════════════════════
+async function loadMaterials() {
+  const res = await apiGet('getMaterials');
+  if (!res.success) return;
+  materialsData = res.data || [];
+  renderMaterials();
+}
+
+function renderMaterials() {
+  const tbody = document.getElementById('materialsTable');
+  if (!tbody) return;
+  if (materialsData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:40px; color:var(--text-muted);">
+      <i class="fas fa-boxes" style="font-size:40px; opacity:0.3; display:block; margin-bottom:10px;"></i>
+      لا توجد مواد
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = materialsData.map((m, i) => {
+    const stock = Number(m.stock) || 0;
+    const minStock = Number(m.minStock) || 0;
+    let stockBadge = `<span class="tag tag-success">${stock}</span>`;
+    if (stock < minStock) stockBadge = `<span class="tag tag-danger">${stock} ⚠️</span>`;
+    else if (stock < minStock * 1.5) stockBadge = `<span class="tag tag-warning">${stock}</span>`;
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td><strong>${escapeHtml(m.name)}</strong></td>
+        <td><span class="tag tag-gray">${escapeHtml(m.unit || '')}</span></td>
+        <td>${formatCurrency(m.price)} ر.ي</td>
+        <td>${stockBadge}</td>
+        <td>${minStock}</td>
+        <td>${escapeHtml(m.supplier || '-')}</td>
+        <td class="actions-cell">
+          <button class="btn-icon edit" onclick="openMaterialModal('${escapeAttr(m.matId)}')" title="تعديل"><i class="fas fa-edit"></i></button>
+          <button class="btn-icon delete" onclick="deleteMaterial('${escapeAttr(m.matId)}')" title="حذف"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function openMaterialModal(matId) {
+  const modal = document.getElementById('materialModal');
+  const title = document.getElementById('materialModalTitle');
+  if (matId) {
+    const m = materialsData.find(x => x.matId === matId);
+    if (!m) return;
+    title.textContent = 'تعديل المادة';
+    setValue('matId', m.matId); setValue('mat_name', m.name);
+    setValue('mat_unit', m.unit); setValue('mat_price', m.price);
+    setValue('mat_stock', m.stock); setValue('mat_minStock', m.minStock);
+    setValue('mat_supplier', m.supplier); setValue('mat_location', m.location);
+  } else {
+    title.textContent = 'إضافة مادة جديدة';
+    document.getElementById('matId').value = '';
+    ['mat_name','mat_price','mat_minStock','mat_supplier','mat_location'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    setValue('mat_stock', '0');
+  }
+  modal.classList.add('active');
+}
+
+async function saveMaterial() {
+  const data = {
+    matId: getValue('matId'), name: getValue('mat_name'),
+    unit: getValue('mat_unit'), price: getValue('mat_price'),
+    stock: getValue('mat_stock'), minStock: getValue('mat_minStock'),
+    supplier: getValue('mat_supplier'), location: getValue('mat_location')
+  };
+  if (!data.name || !data.price || !data.minStock) { showToast('أكمل الحقول المطلوبة', 'warning'); return; }
+  const action = data.matId ? 'updateMaterial' : 'addMaterial';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('materialModal');
+    showToast(t('saved_success'), 'success');
+    loadMaterials(); loadDashboard();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+function deleteMaterial(matId) {
+  showConfirm('هل تريد حذف هذه المادة؟', async () => {
+    const res = await apiPost('deleteMaterial', { id: matId });
+    if (res.success) {
+      showToast(t('deleted_success'), 'success');
+      loadMaterials(); loadDashboard();
+    } else showToast(res.error || t('error'), 'error');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// الفواتير
+// ═══════════════════════════════════════════════════════════
+async function loadInvoices() {
+  const res = await apiGet('getInvoices');
+  if (!res.success) return;
+  invoicesData = res.data || [];
+  renderInvoices();
+}
+
+function renderInvoices() {
+  const tbody = document.getElementById('invoicesTable');
+  if (!tbody) return;
+  if (invoicesData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:40px; color:var(--text-muted);">
+      <i class="fas fa-file-invoice-dollar" style="font-size:40px; opacity:0.3; display:block; margin-bottom:10px;"></i>
+      لا توجد فواتير
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = invoicesData.map((inv, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td>${escapeHtml(inv.date || '')}</td>
+      <td><span class="tag tag-info">${escapeHtml(inv.type || '')}</span></td>
+      <td>${escapeHtml(inv.party || '')}</td>
+      <td><strong>${formatCurrency(inv.amount)} ر.ي</strong></td>
+      <td style="color:var(--success);">${formatCurrency(inv.paid)}</td>
+      <td style="color:var(--danger);">${formatCurrency(inv.remaining)}</td>
+      <td>${statusBadge(inv.status)}</td>
+    </tr>
+  `).join('');
+}
+
+function calcInvoiceRemaining() {
+  const amount = Number(getValue('inv_amount')) || 0;
+  const paid = Number(getValue('inv_paid')) || 0;
+  setValue('inv_remaining', Math.max(0, amount - paid));
+}
+
+function openInvoiceModal(invId) {
+  const modal = document.getElementById('invoiceModal');
+  const title = document.getElementById('invoiceModalTitle');
+  const projSelect = document.getElementById('inv_projectId');
+  if (projSelect) {
+    projSelect.innerHTML = '<option value="">بدون مشروع</option>' +
+      projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+  }
+  if (invId) {
+    const inv = invoicesData.find(x => x.invoiceId === invId);
+    if (!inv) return;
+    title.textContent = 'تعديل الفاتورة';
+    setValue('invId', inv.invoiceId); setValue('inv_type', inv.type);
+    setValue('inv_date', inv.date); setValue('inv_projectId', inv.projectId);
+    setValue('inv_party', inv.party); setValue('inv_description', inv.description);
+    setValue('inv_amount', inv.amount); setValue('inv_paid', inv.paid);
+    setValue('inv_remaining', inv.remaining); setValue('inv_dueDate', inv.dueDate);
+  } else {
+    title.textContent = 'إضافة فاتورة جديدة';
+    document.getElementById('invId').value = '';
+    ['inv_party','inv_description','inv_amount','inv_dueDate'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    setValue('inv_paid', '0'); setValue('inv_remaining', '0');
+    setValue('inv_date', new Date().toISOString().split('T')[0]);
+  }
+  modal.classList.add('active');
+}
+
+async function saveInvoice() {
+  const data = {
+    invoiceId: getValue('invId'), type: getValue('inv_type'),
+    date: getValue('inv_date'), projectId: getValue('inv_projectId'),
+    party: getValue('inv_party'), description: getValue('inv_description'),
+    amount: getValue('inv_amount'), paid: getValue('inv_paid'),
+    dueDate: getValue('inv_dueDate')
+  };
+  if (!data.type || !data.party || !data.amount) { showToast('أكمل الحقول المطلوبة', 'warning'); return; }
+  const action = data.invoiceId ? 'updateInvoice' : 'addInvoice';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('invoiceModal');
+    showToast(t('saved_success'), 'success');
+    loadInvoices(); loadDashboard();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+// ═══════════════════════════════════════════════════════════
+// المواقع
+// ═══════════════════════════════════════════════════════════
+async function loadSites() {
+  const res = await apiGet('getSites');
+  if (!res.success) return;
+  sitesData = res.data || [];
+  renderSites();
+}
+
+function renderSites() {
+  const tbody = document.getElementById('sitesTable');
+  if (!tbody) return;
+  if (sitesData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:40px; color:var(--text-muted);">
+      <i class="fas fa-map-marked-alt" style="font-size:40px; opacity:0.3; display:block; margin-bottom:10px;"></i>
+      لا توجد مواقع
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = sitesData.map((s, i) => {
+    const proj = projectsData.find(p => p.projectId === s.projectId);
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td><strong>${escapeHtml(s.name)}</strong></td>
+        <td>${escapeHtml(proj ? proj.name : s.projectId)}</td>
+        <td>${s.fromKm || 0}</td>
+        <td>${s.toKm || 0}</td>
+        <td>${s.length || 0} كم</td>
+        <td>${statusBadge(s.status)}</td>
+        <td>${escapeHtml(s.supervisor || '-')}</td>
+        <td class="actions-cell">
+          <button class="btn-icon edit" onclick="openSiteModal('${escapeAttr(s.siteId)}')" title="تعديل"><i class="fas fa-edit"></i></button>
+          <button class="btn-icon delete" onclick="deleteSite('${escapeAttr(s.siteId)}')" title="حذف"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function openSiteModal(siteId) {
+  const modal = document.getElementById('siteModal');
+  const title = document.getElementById('siteModalTitle');
+  const projSelect = document.getElementById('site_projectId');
+  if (projSelect) {
+    projSelect.innerHTML = '<option value="">اختر المشروع</option>' +
+      projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+  }
+  if (siteId) {
+    const s = sitesData.find(x => x.siteId === siteId);
+    if (!s) return;
+    title.textContent = 'تعديل الموقع';
+    setValue('siteId', s.siteId); setValue('site_projectId', s.projectId);
+    setValue('site_name', s.name); setValue('site_fromKm', s.fromKm);
+    setValue('site_toKm', s.toKm); setValue('site_status', s.status);
+    setValue('site_supervisor', s.supervisor); setValue('site_notes', s.notes);
+  } else {
+    title.textContent = 'إضافة موقع جديد';
+    document.getElementById('siteId').value = '';
+    ['site_name','site_fromKm','site_toKm','site_supervisor','site_notes'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+  }
+  modal.classList.add('active');
+}
+
+async function saveSite() {
+  const data = {
+    siteId: getValue('siteId'), projectId: getValue('site_projectId'),
+    name: getValue('site_name'), fromKm: getValue('site_fromKm'),
+    toKm: getValue('site_toKm'), status: getValue('site_status'),
+    supervisor: getValue('site_supervisor'), notes: getValue('site_notes')
+  };
+  if (!data.projectId || !data.name) { showToast('أكمل الحقول المطلوبة', 'warning'); return; }
+  const action = data.siteId ? 'updateSite' : 'addSite';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('siteModal');
+    showToast(t('saved_success'), 'success');
+    loadSites();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+function deleteSite(id) {
+  showConfirm('هل تريد حذف هذا الموقع؟', async () => {
+    const res = await apiPost('deleteSite', { id });
+    if (res.success) { showToast(t('deleted_success'), 'success'); loadSites(); }
+    else showToast(res.error || t('error'), 'error');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// الموردين
+// ═══════════════════════════════════════════════════════════
+async function loadSuppliers() {
+  const res = await apiGet('getSuppliers');
+  if (!res.success) return;
+  suppliersData = res.data || [];
+  renderSuppliers();
+}
+
+function renderSuppliers() {
+  const tbody = document.getElementById('suppliersTable');
+  if (!tbody) return;
+  if (suppliersData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">
+      <i class="fas fa-handshake" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+      لا يوجد موردون — اضغط "مورد جديد" للإضافة
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = suppliersData.map((s, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td><strong>${escapeHtml(s.name)}</strong></td>
+      <td><span class="tag tag-info">${escapeHtml(s.type || '')}</span></td>
+      <td>${escapeHtml(s.contact || '-')}</td>
+      <td>${escapeHtml(s.phone || '-')}</td>
+      <td>${formatCurrency(s.balance)} ر.ي</td>
+      <td class="actions-cell">
+        <button class="btn-icon edit" onclick="openSupplierModal('${escapeAttr(s.supplierId)}')" title="تعديل"><i class="fas fa-edit"></i></button>
+        <button class="btn-icon delete" onclick="deleteSupplier('${escapeAttr(s.supplierId)}')" title="حذف"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openSupplierModal(supId) {
+  const modal = document.getElementById('supplierModal');
+  const title = document.getElementById('supplierModalTitle');
+  if (supId) {
+    const s = suppliersData.find(x => x.supplierId === supId);
+    if (!s) return;
+    title.textContent = 'تعديل المورد';
+    setValue('supId', s.supplierId); setValue('sup_name', s.name);
+    setValue('sup_type', s.type); setValue('sup_contact', s.contact);
+    setValue('sup_phone', s.phone); setValue('sup_address', s.address);
+    setValue('sup_balance', s.balance); setValue('sup_notes', s.notes);
+  } else {
+    title.textContent = 'مورد جديد';
+    document.getElementById('supId').value = '';
+    ['sup_name','sup_contact','sup_phone','sup_address','sup_notes'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    setValue('sup_balance', '0');
+  }
+  modal.classList.add('active');
+}
+
+async function saveSupplier() {
+  const data = {
+    supplierId: getValue('supId'), name: getValue('sup_name'),
+    type: getValue('sup_type'), contact: getValue('sup_contact'),
+    phone: getValue('sup_phone'), address: getValue('sup_address'),
+    balance: getValue('sup_balance'), notes: getValue('sup_notes')
+  };
+  if (!data.name || !data.phone) { showToast('أكمل الحقول المطلوبة', 'warning'); return; }
+  const action = data.supplierId ? 'updateSupplier' : 'addSupplier';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('supplierModal');
+    showToast(t('saved_success'), 'success');
+    loadSuppliers();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+function deleteSupplier(id) {
+  showConfirm('هل تريد حذف هذا المورد؟', async () => {
+    const res = await apiPost('deleteSupplier', { id });
+    if (res.success) { showToast(t('deleted_success'), 'success'); loadSuppliers(); }
+    else showToast(res.error || t('error'), 'error');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// المصروفات اليدوية
+// ═══════════════════════════════════════════════════════════
+async function loadExpenses() {
+  const res = await apiGet('getExpenses');
+  if (!res.success) return;
+  expensesData = res.data || [];
+  renderExpenses();
+}
+
+function renderExpenses() {
+  const tbody = document.getElementById('expensesTable');
+  if (!tbody) return;
+  if (expensesData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">
+      <i class="fas fa-money-bill-wave" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+      لا توجد مصروفات — اضغط "مصروف جديد"
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = expensesData.map((e, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td>${escapeHtml(e.date)}</td>
+      <td><span class="tag tag-warning">${escapeHtml(e.category)}</span></td>
+      <td>${escapeHtml((e.description || '').slice(0, 50))}</td>
+      <td><strong style="color:var(--danger);">${formatCurrency(e.amount)} ر.ي</strong></td>
+      <td>${escapeHtml(e.paidBy || '-')}</td>
+      <td class="actions-cell">
+        <button class="btn-icon edit" onclick="openExpenseModal('${escapeAttr(e.expId)}')" title="تعديل"><i class="fas fa-edit"></i></button>
+        <button class="btn-icon delete" onclick="deleteExpense('${escapeAttr(e.expId)}')" title="حذف"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openExpenseModal(expId) {
+  const modal = document.getElementById('expenseModal');
+  const title = document.getElementById('expenseModalTitle');
+
+  const projSelect = document.getElementById('exp_projectId');
+  if (projSelect) {
+    projSelect.innerHTML = '<option value="">بدون مشروع</option>' +
+      projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+  }
+
+  if (expId) {
+    const e = expensesData.find(x => x.expId === expId);
+    if (!e) return;
+    title.textContent = 'تعديل المصروف';
+    setValue('expId', e.expId); setValue('exp_date', e.date);
+    setValue('exp_category', e.category); setValue('exp_projectId', e.projectId);
+    setValue('exp_description', e.description); setValue('exp_amount', e.amount);
+    setValue('exp_paidBy', e.paidBy);
+  } else {
+    title.textContent = 'مصروف جديد';
+    document.getElementById('expId').value = '';
+    ['exp_description','exp_amount','exp_paidBy'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    setValue('exp_date', new Date().toISOString().split('T')[0]);
+  }
+  modal.classList.add('active');
+}
+
+async function saveExpense() {
+  const data = {
+    expId: getValue('expId'), date: getValue('exp_date'),
+    category: getValue('exp_category'), projectId: getValue('exp_projectId'),
+    description: getValue('exp_description'), amount: getValue('exp_amount'),
+    paidBy: getValue('exp_paidBy')
+  };
+  if (!data.date || !data.category || !data.amount) { showToast('أكمل الحقول المطلوبة', 'warning'); return; }
+  const action = data.expId ? 'updateExpense' : 'addExpense';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('expenseModal');
+    showToast(t('saved_success'), 'success');
+    loadExpenses(); loadDashboard();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+function deleteExpense(id) {
+  showConfirm('هل تريد حذف هذا المصروف؟', async () => {
+    const res = await apiPost('deleteExpense', { id });
+    if (res.success) { showToast(t('deleted_success'), 'success'); loadExpenses(); loadDashboard(); }
+    else showToast(res.error || t('error'), 'error');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// السلامة
+// ═══════════════════════════════════════════════════════════
+async function loadSafety() {
+  const res = await apiGet('getSafety');
+  if (!res.success) return;
+  safetyData = res.data || [];
+  renderSafety();
+}
+
+function renderSafety() {
+  const tbody = document.getElementById('safetyTable');
+  if (!tbody) return;
+  if (safetyData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">
+      <i class="fas fa-shield-alt" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+      لا توجد تقارير سلامة
+    </td></tr>`;
+    return;
+  }
+  const sevColor = { 'منخفض': 'tag-success', 'متوسط': 'tag-warning', 'عالي': 'tag-danger', 'حرج': 'tag-danger' };
+  tbody.innerHTML = safetyData.map((s, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td>${escapeHtml(s.date)}</td>
+      <td><span class="tag tag-info">${escapeHtml(s.type)}</span></td>
+      <td>${escapeHtml((s.description || '').slice(0, 60))}</td>
+      <td><span class="tag ${sevColor[s.severity] || 'tag-gray'}">${escapeHtml(s.severity || '')}</span></td>
+      <td>${escapeHtml(s.responsible || '-')}</td>
+      <td class="actions-cell">
+        <button class="btn-icon edit" onclick="openSafetyModal('${escapeAttr(s.reportId)}')" title="تعديل"><i class="fas fa-edit"></i></button>
+        <button class="btn-icon delete" onclick="deleteSafety('${escapeAttr(s.reportId)}')" title="حذف"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openSafetyModal(reportId) {
+  const modal = document.getElementById('safetyModal');
+  const title = document.getElementById('safetyModalTitle');
+  const projSelect = document.getElementById('saf_projectId');
+  if (projSelect) {
+    projSelect.innerHTML = '<option value="">بدون مشروع</option>' +
+      projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+  }
+  if (reportId) {
+    const s = safetyData.find(x => x.reportId === reportId);
+    if (!s) return;
+    title.textContent = 'تعديل تقرير السلامة';
+    setValue('safId', s.reportId); setValue('saf_date', s.date);
+    setValue('saf_type', s.type); setValue('saf_projectId', s.projectId);
+    setValue('saf_description', s.description); setValue('saf_severity', s.severity);
+    setValue('saf_responsible', s.responsible); setValue('saf_action', s.action);
+  } else {
+    title.textContent = 'تقرير سلامة';
+    document.getElementById('safId').value = '';
+    ['saf_description','saf_responsible','saf_action'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    setValue('saf_date', new Date().toISOString().split('T')[0]);
+  }
+  modal.classList.add('active');
+}
+
+async function saveSafety() {
+  const data = {
+    reportId: getValue('safId'), date: getValue('saf_date'),
+    type: getValue('saf_type'), projectId: getValue('saf_projectId'),
+    description: getValue('saf_description'), severity: getValue('saf_severity'),
+    responsible: getValue('saf_responsible'), action: getValue('saf_action')
+  };
+  if (!data.date || !data.description) { showToast('أكمل الحقول المطلوبة', 'warning'); return; }
+  const action = data.reportId ? 'updateSafety' : 'addSafety';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('safetyModal');
+    showToast(t('saved_success'), 'success');
+    loadSafety(); loadDashboard();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+function deleteSafety(id) {
+  showConfirm('هل تريد حذف التقرير؟', async () => {
+    const res = await apiPost('deleteSafety', { id });
+    if (res.success) { showToast(t('deleted_success'), 'success'); loadSafety(); loadDashboard(); }
+    else showToast(res.error || t('error'), 'error');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// الجودة
+// ═══════════════════════════════════════════════════════════
+async function loadQuality() {
+  const res = await apiGet('getQuality');
+  if (!res.success) return;
+  qualityData = res.data || [];
+  renderQuality();
+}
+
+function renderQuality() {
+  const tbody = document.getElementById('qualityTable');
+  if (!tbody) return;
+  if (qualityData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">
+      <i class="fas fa-clipboard-check" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+      لا توجد فحوصات جودة
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = qualityData.map((q, i) => {
+    const proj = projectsData.find(p => p.projectId === q.projectId);
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(q.date)}</td>
+        <td>${escapeHtml(q.testType)}</td>
+        <td>${escapeHtml(proj ? proj.name : q.projectId || '-')}</td>
+        <td><strong>${escapeHtml(q.result)}</strong></td>
+        <td>${q.status === 'مطابق' ? '<span class="tag tag-success">مطابق ✓</span>' : '<span class="tag tag-danger">غير مطابق ✗</span>'}</td>
+        <td>${escapeHtml(q.engineer || '-')}</td>
+      </tr>`;
+  }).join('');
+}
+
+function openQualityModal() {
+  document.getElementById('qtyId').value = '';
+  ['qty_result','qty_engineer'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  setValue('qty_date', new Date().toISOString().split('T')[0]);
+  const projSelect = document.getElementById('qty_projectId');
+  if (projSelect) {
+    projSelect.innerHTML = '<option value="">اختر المشروع</option>' +
+      projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+  }
+  document.getElementById('qualityModal').classList.add('active');
+}
+
+async function saveQuality() {
+  const data = {
+    date: getValue('qty_date'), testType: getValue('qty_testType'),
+    projectId: getValue('qty_projectId'), result: getValue('qty_result'),
+    status: getValue('qty_status'), engineer: getValue('qty_engineer')
+  };
+  if (!data.date || !data.result) { showToast('أكمل الحقول المطلوبة', 'warning'); return; }
+  const result = await apiPost('addQuality', data);
+  if (result.success) {
+    closeModalById('qualityModal');
+    showToast(t('saved_success'), 'success');
+    loadQuality();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+// ═══════════════════════════════════════════════════════════
+// الإنجاز
+// ═══════════════════════════════════════════════════════════
+async function loadProgress() {
+  const res = await apiGet('getProgress');
+  if (!res.success) return;
+  progressData = res.data || [];
+  renderProgress();
+}
+
+function renderProgress() {
+  const tbody = document.getElementById('progressTable');
+  if (!tbody) return;
+  if (progressData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">
+      <i class="fas fa-tasks" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+      لا توجد تقارير إنجاز
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = progressData.map((p, i) => {
+    const proj = projectsData.find(x => x.projectId === p.projectId);
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(p.date)}</td>
+        <td>${escapeHtml(proj ? proj.name : p.projectId || '-')}</td>
+        <td>${escapeHtml(p.siteId || '-')}</td>
+        <td><span class="tag tag-info">${escapeHtml(p.layer)}</span></td>
+        <td><strong>${p.workedKm || 0} كم</strong></td>
+        <td>${escapeHtml(p.supervisor || '-')}</td>
+      </tr>`;
+  }).join('');
+}
+
+function openProgressModal() {
+  document.getElementById('prgId').value = '';
+  ['prg_supervisor','prg_workedKm','prg_notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  setValue('prg_date', new Date().toISOString().split('T')[0]);
+  const projSelect = document.getElementById('prg_projectId');
+  if (projSelect) {
+    projSelect.innerHTML = '<option value="">اختر المشروع</option>' +
+      projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+  }
+  document.getElementById('progressModal').classList.add('active');
+}
+
+async function saveProgress() {
+  const data = {
+    date: getValue('prg_date'), projectId: getValue('prg_projectId'),
+    layer: getValue('prg_layer'), workedKm: getValue('prg_workedKm'),
+    supervisor: getValue('prg_supervisor'), notes: getValue('prg_notes')
+  };
+  if (!data.date || !data.projectId || !data.supervisor) { showToast('أكمل الحقول المطلوبة', 'warning'); return; }
+  const result = await apiPost('addProgress', data);
+  if (result.success) {
+    closeModalById('progressModal');
+    showToast(t('saved_success'), 'success');
+    loadProgress();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+// ═══════════════════════════════════════════════════════════
+// التقارير
+// ═══════════════════════════════════════════════════════════
+async function generateReport() {
+  const type = document.getElementById('reportType').value;
+  const entity = document.getElementById('reportEntity').value;
+  const content = document.getElementById('reportContent');
+  content.innerHTML = `<div style="text-align:center;padding:30px;">⏳ جاري إنشاء التقرير...</div>`;
+
+  const res = await apiGet('getReport', { type, entity });
+  if (!res.success) {
+    content.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>حدث خطأ في التقرير</h3></div>`;
+    return;
+  }
+  const typeLabel = { daily: 'يومي', weekly: 'أسبوعي', monthly: 'شهري', yearly: 'سنوي' }[type];
+  const entityLabel = { all: 'الكل', projects: 'المشاريع', equipment: 'المعدات', workers: 'العمال', materials: 'المواد' }[entity];
+
+  let html = `<div style="text-align:center;margin-bottom:20px;padding-bottom:15px;border-bottom:2px solid var(--border);">
+    <h2 style="color:var(--primary);font-size:20px;">التقرير ${typeLabel} - ${entityLabel}</h2>
+    <p style="color:var(--text-muted);font-size:13px;">${new Date().toLocaleString('ar-EG')}</p>
+  </div>`;
+
+  if (res.data && res.data.length > 0) {
+    html += `<table class="table"><thead><tr>`;
+    const keys = Object.keys(res.data[0]);
+    keys.forEach(k => { html += `<th>${escapeHtml(k)}</th>`; });
+    html += `</tr></thead><tbody>`;
+    res.data.forEach(row => {
+      html += `<tr>`;
+      keys.forEach(k => { html += `<td>${escapeHtml(row[k])}</td>`; });
+      html += `</tr>`;
+    });
+    html += `</tbody></table>`;
+  } else {
+    html += `<div class="empty-state"><i class="fas fa-inbox"></i><h3>لا توجد بيانات للفترة المحددة</h3></div>`;
+  }
+  content.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// سجل المعدات اليومي
+// ═══════════════════════════════════════════════════════════
+async function loadDailyEquipLog() {
+  const date = document.getElementById('filterEquipDate')?.value || '';
+  const projectId = document.getElementById('filterEquipProject')?.value || '';
+  const res = await apiGet('getDailyEquipLog', { date, projectId });
+  if (!res.success) return;
+  dailyEquipData = res.data || [];
+  renderDailyEquip();
+}
+
+function renderDailyEquip() {
+  const tbody = document.getElementById('dailyEquipTable');
+  if (!tbody) return;
+  if (dailyEquipData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--text-muted);">
+      <i class="fas fa-truck-monster" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+      لا توجد سجلات — اضغط "تسجيل جديد"
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = dailyEquipData.map((log, i) => {
+    const eq = equipmentData.find(e => e.equipId === log.equipId);
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(log.date)}</td>
+        <td><strong>${escapeHtml(eq ? eq.name : log.equipId)}</strong></td>
+        <td>${escapeHtml(log.siteId || '-')}</td>
+        <td>${escapeHtml(log.startTime || '')}-${escapeHtml(log.endTime || '')}</td>
+        <td><span class="tag tag-info">${log.workingHours} س</span></td>
+        <td>${log.dieselQty} ل</td>
+        <td>${log.workedKm} كم</td>
+        <td>${log.workedQty} ${escapeHtml(log.unit || '')}</td>
+        <td>${escapeHtml((log.workDescription || '').slice(0, 30))}</td>
+        <td class="actions-cell">
+          <button class="btn-icon edit" onclick="editDailyEquip('${escapeAttr(log.logId)}')" title="تعديل"><i class="fas fa-edit"></i></button>
+          <button class="btn-icon delete" onclick="deleteDailyEquip('${escapeAttr(log.logId)}')" title="حذف"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function openDailyEquipModal() {
+  document.getElementById('delLogId').value = '';
+  ['del_dieselQty','del_dieselCost','del_workedKm','del_workedQty','del_workDescription',
+   'del_notes','del_siteId','del_operator'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  setValue('del_date', new Date().toISOString().split('T')[0]);
+  setValue('del_startTime', '07:00');
+  setValue('del_endTime', '17:00');
+  document.getElementById('dailyEquipTitle').textContent = 'تسجيل عمل معدة';
+
+  const eqSelect = document.getElementById('del_equipId');
+  eqSelect.innerHTML = '<option value="">اختر المعدة</option>' +
+    equipmentData.map(e => `<option value="${escapeAttr(e.equipId)}" data-operator="${escapeAttr(e.operator || '')}">${escapeHtml(e.name)}</option>`).join('');
+
+  const projSelect = document.getElementById('del_projectId');
+  projSelect.innerHTML = '<option value="">اختر المشروع</option>' +
+    projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+
+  document.getElementById('dailyEquipModal').classList.add('active');
+}
+
+function fillEquipOperator() {
+  const sel = document.getElementById('del_equipId');
+  const opt = sel.options[sel.selectedIndex];
+  if (opt && opt.dataset.operator) {
+    document.getElementById('del_operator').value = opt.dataset.operator;
+  }
+}
+
+function calcDieselCost() {
+  const qty = Number(getValue('del_dieselQty')) || 0;
+  if (qty && !getValue('del_dieselCost')) {
+    setValue('del_dieselCost', qty * 2000);
+  }
+}
+
+async function saveDailyEquipLog() {
+  const data = {
+    logId: getValue('delLogId'), date: getValue('del_date'),
+    equipId: getValue('del_equipId'), projectId: getValue('del_projectId'),
+    siteId: getValue('del_siteId'), startTime: getValue('del_startTime'),
+    endTime: getValue('del_endTime'), dieselQty: getValue('del_dieselQty'),
+    dieselCost: getValue('del_dieselCost'), workedKm: getValue('del_workedKm'),
+    workedQty: getValue('del_workedQty'), unit: getValue('del_unit'),
+    workDescription: getValue('del_workDescription'),
+    operator: getValue('del_operator'), supervisor: getValue('del_supervisor'),
+    notes: getValue('del_notes')
+  };
+  if (!data.date || !data.equipId || !data.projectId) {
+    showToast('أكمل الحقول المطلوبة', 'warning'); return;
+  }
+  const action = data.logId ? 'updateDailyEquipLog' : 'addDailyEquipLog';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('dailyEquipModal');
+    showToast(t('saved_success'), 'success');
+    loadDailyEquipLog();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+function editDailyEquip(logId) {
+  const log = dailyEquipData.find(x => x.logId === logId);
+  if (!log) return;
+
+  document.getElementById('delLogId').value = log.logId;
+  setValue('del_date', log.date); setValue('del_siteId', log.siteId);
+  setValue('del_operator', log.operator); setValue('del_startTime', log.startTime);
+  setValue('del_endTime', log.endTime); setValue('del_dieselQty', log.dieselQty);
+  setValue('del_dieselCost', log.dieselCost); setValue('del_workedKm', log.workedKm);
+  setValue('del_workedQty', log.workedQty); setValue('del_unit', log.unit);
+  setValue('del_workDescription', log.workDescription);
+  setValue('del_supervisor', log.supervisor); setValue('del_notes', log.notes);
+
+  const eqSelect = document.getElementById('del_equipId');
+  eqSelect.innerHTML = '<option value="">اختر المعدة</option>' +
+    equipmentData.map(e => `<option value="${escapeAttr(e.equipId)}">${escapeHtml(e.name)}</option>`).join('');
+  eqSelect.value = log.equipId;
+
+  const projSelect = document.getElementById('del_projectId');
+  projSelect.innerHTML = '<option value="">اختر المشروع</option>' +
+    projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+  projSelect.value = log.projectId;
+
+  document.getElementById('dailyEquipTitle').textContent = 'تعديل سجل المعدة';
+  document.getElementById('dailyEquipModal').classList.add('active');
+}
+
+function deleteDailyEquip(id) {
+  showConfirm('هل تريد حذف هذا السجل؟', async () => {
+    const res = await apiPost('deleteDailyEquipLog', { id });
+    if (res.success) {
+      showToast(t('deleted_success'), 'success');
+      loadDailyEquipLog();
+    } else showToast(res.error || t('error'), 'error');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// سجل العمال اليومي
+// ═══════════════════════════════════════════════════════════
+async function loadDailyWorkersLog() {
+  const date = document.getElementById('filterWorkerDate')?.value || '';
+  const projectId = document.getElementById('filterWorkerProject')?.value || '';
+  const res = await apiGet('getDailyWorkersLog', { date, projectId });
+  if (!res.success) return;
+  dailyWorkersData = res.data || [];
+  renderDailyWorkers();
+}
+
+function renderDailyWorkers() {
+  const tbody = document.getElementById('dailyWorkersTable');
+  if (!tbody) return;
+  if (dailyWorkersData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--text-muted);">
+      <i class="fas fa-user-clock" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+      لا توجد سجلات — اضغط "تسجيل جديد"
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = dailyWorkersData.map((log, i) => {
+    const w = workersData.find(x => x.workerId === log.workerId);
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(log.date)}</td>
+        <td><strong>${escapeHtml(w ? w.name : log.workerId)}</strong></td>
+        <td>${escapeHtml(w ? w.job : '-')}</td>
+        <td>${escapeHtml(log.siteId || '-')}</td>
+        <td>${log.attendance === 'حاضر' ? '<span class="tag tag-success">حاضر</span>' : '<span class="tag tag-danger">' + escapeHtml(log.attendance) + '</span>'}</td>
+        <td>${log.hours} س</td>
+        <td>${log.overtime} س</td>
+        <td>${formatCurrency(log.dailyWage)}</td>
+        <td>${escapeHtml((log.workDescription || '').slice(0, 30))}</td>
+        <td class="actions-cell">
+          <button class="btn-icon edit" onclick="editDailyWorker('${escapeAttr(log.logId)}')" title="تعديل"><i class="fas fa-edit"></i></button>
+          <button class="btn-icon delete" onclick="deleteDailyWorker('${escapeAttr(log.logId)}')" title="حذف"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function openDailyWorkerModal() {
+  document.getElementById('dwlLogId').value = '';
+  ['dwl_workDescription','dwl_notes','dwl_siteId','dwl_dailyWage'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  setValue('dwl_date', new Date().toISOString().split('T')[0]);
+  setValue('dwl_checkIn', '07:00');
+  setValue('dwl_checkOut', '17:00');
+  setValue('dwl_overtime', '0');
+  document.getElementById('dailyWorkerTitle').textContent = 'تسجيل عمل عامل';
+
+  const workerSelect = document.getElementById('dwl_workerId');
+  workerSelect.innerHTML = '<option value="">اختر العامل</option>' +
+    workersData.map(w => `<option value="${escapeAttr(w.workerId)}" data-job="${escapeAttr(w.job || '')}" data-salary="${escapeAttr(w.dailyWage || 0)}">${escapeHtml(w.name)}</option>`).join('');
+
+  const projSelect = document.getElementById('dwl_projectId');
+  projSelect.innerHTML = '<option value="">اختر المشروع</option>' +
+    projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+
+  document.getElementById('dailyWorkerModal').classList.add('active');
+}
+
+function fillWorkerJob() {
+  const sel = document.getElementById('dwl_workerId');
+  const opt = sel.options[sel.selectedIndex];
+  if (opt) {
+    if (opt.dataset.job) document.getElementById('dwl_job').value = opt.dataset.job;
+    if (opt.dataset.salary) document.getElementById('dwl_dailyWage').value = opt.dataset.salary;
+  }
+}
+
+async function saveDailyWorkersLog() {
+  const data = {
+    logId: getValue('dwlLogId'), date: getValue('dwl_date'),
+    workerId: getValue('dwl_workerId'), projectId: getValue('dwl_projectId'),
+    siteId: getValue('dwl_siteId'), attendance: getValue('dwl_attendance'),
+    checkIn: getValue('dwl_checkIn'), checkOut: getValue('dwl_checkOut'),
+    overtime: getValue('dwl_overtime'), dailyWage: getValue('dwl_dailyWage'),
+    workDescription: getValue('dwl_workDescription'),
+    supervisor: getValue('dwl_supervisor'), notes: getValue('dwl_notes')
+  };
+  if (!data.date || !data.workerId || !data.projectId) {
+    showToast('أكمل الحقول المطلوبة', 'warning'); return;
+  }
+  const action = data.logId ? 'updateDailyWorkersLog' : 'addDailyWorkersLog';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('dailyWorkerModal');
+    showToast(t('saved_success'), 'success');
+    loadDailyWorkersLog();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+function editDailyWorker(logId) {
+  const log = dailyWorkersData.find(x => x.logId === logId);
+  if (!log) return;
+
+  document.getElementById('dwlLogId').value = log.logId;
+  setValue('dwl_date', log.date); setValue('dwl_siteId', log.siteId);
+  setValue('dwl_attendance', log.attendance); setValue('dwl_dailyWage', log.dailyWage);
+  setValue('dwl_checkIn', log.checkIn); setValue('dwl_checkOut', log.checkOut);
+  setValue('dwl_overtime', log.overtime); setValue('dwl_workDescription', log.workDescription);
+  setValue('dwl_supervisor', log.supervisor); setValue('dwl_notes', log.notes);
+
+  const workerSelect = document.getElementById('dwl_workerId');
+  workerSelect.innerHTML = '<option value="">اختر العامل</option>' +
+    workersData.map(w => `<option value="${escapeAttr(w.workerId)}" data-job="${escapeAttr(w.job || '')}" data-salary="${escapeAttr(w.dailyWage || 0)}">${escapeHtml(w.name)}</option>`).join('');
+  workerSelect.value = log.workerId;
+  const opt = workerSelect.options[workerSelect.selectedIndex];
+  if (opt && opt.dataset.job) setValue('dwl_job', opt.dataset.job);
+
+  const projSelect = document.getElementById('dwl_projectId');
+  projSelect.innerHTML = '<option value="">اختر المشروع</option>' +
+    projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+  projSelect.value = log.projectId;
+
+  document.getElementById('dailyWorkerTitle').textContent = 'تعديل سجل العامل';
+  document.getElementById('dailyWorkerModal').classList.add('active');
+}
+
+function deleteDailyWorker(id) {
+  showConfirm('هل تريد حذف هذا السجل؟', async () => {
+    const res = await apiPost('deleteDailyWorkersLog', { id });
+    if (res.success) {
+      showToast(t('deleted_success'), 'success');
+      loadDailyWorkersLog();
+    } else showToast(res.error || t('error'), 'error');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// توريد المواد
+// ═══════════════════════════════════════════════════════════
+async function loadMaterialSupply() {
+  const date = document.getElementById('filterSupplyDate')?.value || '';
+  const toProjectId = document.getElementById('filterSupplyProject')?.value || '';
+  const res = await apiGet('getMaterialSupply', { date, toProjectId });
+  if (!res.success) return;
+  supplyData = res.data || [];
+  renderMaterialSupply();
+}
+
+function renderMaterialSupply() {
+  const tbody = document.getElementById('materialSupplyTable');
+  if (!tbody) return;
+  if (supplyData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">
+      <i class="fas fa-truck-loading" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+      لا توجد سجلات — اضغط "توريد جديد"
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = supplyData.map((s, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td>${escapeHtml(s.date)}</td>
+      <td><strong>${escapeHtml(s.matName)}</strong></td>
+      <td>${escapeHtml(s.fromLocation || '-')}</td>
+      <td>${escapeHtml(s.toSiteId || '-')}</td>
+      <td><span class="tag tag-info">${s.zafatCount} زفة</span></td>
+      <td>${s.zafaSize}</td>
+      <td><strong style="color:var(--success);">${s.totalQuantity}</strong></td>
+      <td>${escapeHtml(s.unit || '')}</td>
+      <td>${escapeHtml(s.driverName || '-')}</td>
+      <td>${formatCurrency(s.cost)}</td>
+      <td class="actions-cell">
+        <button class="btn-icon edit" onclick="editMaterialSupply('${escapeAttr(s.supplyId)}')" title="تعديل"><i class="fas fa-edit"></i></button>
+        <button class="btn-icon delete" onclick="deleteMaterialSupply('${escapeAttr(s.supplyId)}')" title="حذف"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openMaterialSupplyModal() {
+  document.getElementById('msSupplyId').value = '';
+  ['ms_fromLocation','ms_toSiteId','ms_zafatCount','ms_zafaSize','ms_totalQuantity',
+   'ms_driverName','ms_truckNumber','ms_cost','ms_notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  setValue('ms_date', new Date().toISOString().split('T')[0]);
+  document.getElementById('materialSupplyTitle').textContent = 'توريد مادة';
+
+  const matSelect = document.getElementById('ms_matId');
+  matSelect.innerHTML = '<option value="">اختر المادة</option>' +
+    materialsData.map(m => `<option value="${escapeAttr(m.matId)}" data-unit="${escapeAttr(m.unit || '')}" data-name="${escapeAttr(m.name || '')}">${escapeHtml(m.name)}</option>`).join('');
+
+  const projSelect = document.getElementById('ms_toProjectId');
+  projSelect.innerHTML = '<option value="">اختر المشروع</option>' +
+    projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+
+  const supSelect = document.getElementById('ms_supplierId');
+  supSelect.innerHTML = '<option value="">اختر المورد</option>' +
+    suppliersData.map(s => `<option value="${escapeAttr(s.supplierId)}">${escapeHtml(s.name)}</option>`).join('');
+
+  document.getElementById('materialSupplyModal').classList.add('active');
+}
+
+function fillMaterialName() {
+  const sel = document.getElementById('ms_matId');
+  const opt = sel.options[sel.selectedIndex];
+  if (opt && opt.dataset.unit) {
+    document.getElementById('ms_unit').value = opt.dataset.unit;
+  }
+}
+
+function calcSupplyTotal() {
+  const count = Number(getValue('ms_zafatCount')) || 0;
+  const size = Number(getValue('ms_zafaSize')) || 0;
+  setValue('ms_totalQuantity', count * size);
+}
+
+async function saveMaterialSupply() {
+  const matSelect = document.getElementById('ms_matId');
+  const matOpt = matSelect.options[matSelect.selectedIndex];
+  const data = {
+    supplyId: getValue('msSupplyId'), date: getValue('ms_date'),
+    matId: getValue('ms_matId'),
+    matName: matOpt ? matOpt.dataset.name : '',
+    fromLocation: getValue('ms_fromLocation'),
+    toProjectId: getValue('ms_toProjectId'), toSiteId: getValue('ms_toSiteId'),
+    zafatCount: getValue('ms_zafatCount'), zafaSize: getValue('ms_zafaSize'),
+    unit: getValue('ms_unit'), supplierId: getValue('ms_supplierId'),
+    driverName: getValue('ms_driverName'), truckNumber: getValue('ms_truckNumber'),
+    cost: getValue('ms_cost'), notes: getValue('ms_notes')
+  };
+  if (!data.date || !data.matId || !data.toProjectId) {
+    showToast('أكمل الحقول المطلوبة', 'warning'); return;
+  }
+  const action = data.supplyId ? 'updateMaterialSupply' : 'addMaterialSupply';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('materialSupplyModal');
+    showToast(t('saved_success'), 'success');
+    loadMaterialSupply();
+    loadMaterials();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+function editMaterialSupply(supplyId) {
+  const s = supplyData.find(x => x.supplyId === supplyId);
+  if (!s) return;
+
+  document.getElementById('msSupplyId').value = s.supplyId;
+  setValue('ms_date', s.date); setValue('ms_unit', s.unit);
+  setValue('ms_fromLocation', s.fromLocation); setValue('ms_toSiteId', s.toSiteId);
+  setValue('ms_zafatCount', s.zafatCount); setValue('ms_zafaSize', s.zafaSize);
+  setValue('ms_totalQuantity', s.totalQuantity); setValue('ms_driverName', s.driverName);
+  setValue('ms_truckNumber', s.truckNumber); setValue('ms_cost', s.cost);
+  setValue('ms_notes', s.notes);
+
+  const matSelect = document.getElementById('ms_matId');
+  matSelect.innerHTML = '<option value="">اختر المادة</option>' +
+    materialsData.map(m => `<option value="${escapeAttr(m.matId)}" data-unit="${escapeAttr(m.unit || '')}" data-name="${escapeAttr(m.name || '')}">${escapeHtml(m.name)}</option>`).join('');
+  matSelect.value = s.matId;
+
+  const projSelect = document.getElementById('ms_toProjectId');
+  projSelect.innerHTML = '<option value="">اختر المشروع</option>' +
+    projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+  projSelect.value = s.toProjectId;
+
+  const supSelect = document.getElementById('ms_supplierId');
+  supSelect.innerHTML = '<option value="">اختر المورد</option>' +
+    suppliersData.map(x => `<option value="${escapeAttr(x.supplierId)}">${escapeHtml(x.name)}</option>`).join('');
+  supSelect.value = s.supplierId;
+
+  document.getElementById('materialSupplyTitle').textContent = 'تعديل التوريد';
+  document.getElementById('materialSupplyModal').classList.add('active');
+}
+
+function deleteMaterialSupply(id) {
+  showConfirm('هل تريد حذف هذا التوريد؟', async () => {
+    const res = await apiPost('deleteMaterialSupply', { id });
+    if (res.success) {
+      showToast(t('deleted_success'), 'success');
+      loadMaterialSupply();
+      loadMaterials();
+    } else showToast(res.error || t('error'), 'error');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// المحروقات
+// ═══════════════════════════════════════════════════════════
+async function loadFuelLog() {
+  const date = document.getElementById('filterFuelDate')?.value || '';
+  const res = await apiGet('getFuelLog', { date });
+  if (!res.success) return;
+  fuelData = res.data || [];
+  renderFuelLog();
+}
+
+function renderFuelLog() {
+  const tbody = document.getElementById('fuelTable');
+  if (!tbody) return;
+  if (fuelData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">
+      <i class="fas fa-gas-pump" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+      لا توجد سجلات — اضغط "تسجيل جديد"
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = fuelData.map((f, i) => {
+    const eq = equipmentData.find(e => e.equipId === f.equipId);
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(f.date)}</td>
+        <td>${escapeHtml(eq ? eq.name : f.equipId || '-')}</td>
+        <td><span class="tag tag-info">${escapeHtml(f.fuelType)}</span></td>
+        <td><strong>${f.quantity}</strong> لتر</td>
+        <td>${formatCurrency(f.pricePerLiter)}</td>
+        <td style="color:var(--danger);font-weight:700;">${formatCurrency(f.totalCost)} ر.ي</td>
+        <td>${escapeHtml(f.location || '-')}</td>
+        <td>${escapeHtml(f.receiptNumber || '-')}</td>
+        <td class="actions-cell">
+          <button class="btn-icon edit" onclick="editFuel('${escapeAttr(f.fuelId)}')" title="تعديل"><i class="fas fa-edit"></i></button>
+          <button class="btn-icon delete" onclick="deleteFuel('${escapeAttr(f.fuelId)}')" title="حذف"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function openFuelModal() {
+  document.getElementById('flFuelId').value = '';
+  ['fl_quantity','fl_receiptNumber','fl_driver','fl_notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  setValue('fl_date', new Date().toISOString().split('T')[0]);
+  setValue('fl_pricePerLiter', '2000');
+  setValue('fl_totalCost', '0');
+  document.getElementById('fuelTitle').textContent = 'تسجيل محروقات';
+
+  const eqSelect = document.getElementById('fl_equipId');
+  eqSelect.innerHTML = '<option value="">اختر المعدة/السيارة</option>' +
+    equipmentData.map(e => `<option value="${escapeAttr(e.equipId)}">${escapeHtml(e.name)}</option>`).join('');
+
+  document.getElementById('fuelModal').classList.add('active');
+}
+
+function calcFuelTotal() {
+  const qty = Number(getValue('fl_quantity')) || 0;
+  const price = Number(getValue('fl_pricePerLiter')) || 0;
+  setValue('fl_totalCost', qty * price);
+}
+
+async function saveFuelLog() {
+  const data = {
+    fuelId: getValue('flFuelId'), date: getValue('fl_date'),
+    equipId: getValue('fl_equipId'), fuelType: getValue('fl_fuelType'),
+    quantity: getValue('fl_quantity'), pricePerLiter: getValue('fl_pricePerLiter'),
+    location: getValue('fl_location'), receiptNumber: getValue('fl_receiptNumber'),
+    driver: getValue('fl_driver'), notes: getValue('fl_notes')
+  };
+  if (!data.date || !data.equipId || !data.quantity) {
+    showToast('أكمل الحقول المطلوبة', 'warning'); return;
+  }
+  const action = data.fuelId ? 'updateFuelLog' : 'addFuelLog';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('fuelModal');
+    showToast(t('saved_success'), 'success');
+    loadFuelLog();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+function editFuel(fuelId) {
+  const f = fuelData.find(x => x.fuelId === fuelId);
+  if (!f) return;
+
+  document.getElementById('flFuelId').value = f.fuelId;
+  setValue('fl_date', f.date); setValue('fl_fuelType', f.fuelType);
+  setValue('fl_quantity', f.quantity); setValue('fl_pricePerLiter', f.pricePerLiter);
+  setValue('fl_totalCost', f.totalCost); setValue('fl_location', f.location);
+  setValue('fl_receiptNumber', f.receiptNumber); setValue('fl_driver', f.driver);
+  setValue('fl_notes', f.notes);
+
+  const eqSelect = document.getElementById('fl_equipId');
+  eqSelect.innerHTML = '<option value="">اختر المعدة/السيارة</option>' +
+    equipmentData.map(e => `<option value="${escapeAttr(e.equipId)}">${escapeHtml(e.name)}</option>`).join('');
+  eqSelect.value = f.equipId;
+
+  document.getElementById('fuelTitle').textContent = 'تعديل سجل الوقود';
+  document.getElementById('fuelModal').classList.add('active');
+}
+
+function deleteFuel(id) {
+  showConfirm('هل تريد حذف هذا السجل؟', async () => {
+    const res = await apiPost('deleteFuelLog', { id });
+    if (res.success) {
+      showToast(t('deleted_success'), 'success');
+      loadFuelLog();
+    } else showToast(res.error || t('error'), 'error');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// المشتريات
+// ═══════════════════════════════════════════════════════════
+async function loadPurchases() {
+  const date = document.getElementById('filterPurchaseDate')?.value || '';
+  const res = await apiGet('getPurchases', { date });
+  if (!res.success) return;
+  purchasesData = res.data || [];
+  renderPurchases();
+}
+
+function renderPurchases() {
+  const tbody = document.getElementById('purchasesTable');
+  if (!tbody) return;
+  if (purchasesData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--text-muted);">
+      <i class="fas fa-shopping-cart" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+      لا توجد مشتريات — اضغط "مشترى جديد"
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = purchasesData.map((p, i) => {
+    const sup = suppliersData.find(s => s.supplierId === p.supplierId);
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(p.date)}</td>
+        <td><strong>${escapeHtml(p.itemName)}</strong></td>
+        <td><span class="tag tag-gray">${escapeHtml(p.category)}</span></td>
+        <td>${p.quantity} ${escapeHtml(p.unit || '')}</td>
+        <td>${formatCurrency(p.price)}</td>
+        <td style="color:var(--danger);font-weight:700;">${formatCurrency(p.totalCost)}</td>
+        <td>${escapeHtml(sup ? sup.name : '-')}</td>
+        <td style="color:var(--success);">${formatCurrency(p.paid)}</td>
+        <td style="color:var(--warning);">${formatCurrency(p.remaining)}</td>
+        <td class="actions-cell">
+          <button class="btn-icon edit" onclick="editPurchase('${escapeAttr(p.purchaseId)}')" title="تعديل"><i class="fas fa-edit"></i></button>
+          <button class="btn-icon delete" onclick="deletePurchase('${escapeAttr(p.purchaseId)}')" title="حذف"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function openPurchaseModal() {
+  document.getElementById('purPurchaseId').value = '';
+  ['pur_itemName','pur_quantity','pur_price','pur_totalCost','pur_invoiceNumber',
+   'pur_notes','pur_unit'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  setValue('pur_date', new Date().toISOString().split('T')[0]);
+  setValue('pur_paid', '0'); setValue('pur_remaining', '0');
+  document.getElementById('purchaseTitle').textContent = 'مشترى جديد';
+
+  const supSelect = document.getElementById('pur_supplierId');
+  supSelect.innerHTML = '<option value="">اختر المورد</option>' +
+    suppliersData.map(s => `<option value="${escapeAttr(s.supplierId)}">${escapeHtml(s.name)}</option>`).join('');
+
+  document.getElementById('purchaseModal').classList.add('active');
+}
+
+function calcPurchaseTotal() {
+  const qty = Number(getValue('pur_quantity')) || 0;
+  const price = Number(getValue('pur_price')) || 0;
+  const total = qty * price;
+  setValue('pur_totalCost', total);
+  const paid = Number(getValue('pur_paid')) || 0;
+  setValue('pur_remaining', Math.max(0, total - paid));
+}
+
+async function savePurchase() {
+  const data = {
+    purchaseId: getValue('purPurchaseId'), date: getValue('pur_date'),
+    supplierId: getValue('pur_supplierId'), itemName: getValue('pur_itemName'),
+    category: getValue('pur_category'), quantity: getValue('pur_quantity'),
+    unit: getValue('pur_unit'), price: getValue('pur_price'),
+    invoiceNumber: getValue('pur_invoiceNumber'), paid: getValue('pur_paid'),
+    notes: getValue('pur_notes')
+  };
+  if (!data.date || !data.itemName || !data.quantity || !data.price) {
+    showToast('أكمل الحقول المطلوبة', 'warning'); return;
+  }
+  const action = data.purchaseId ? 'updatePurchase' : 'addPurchase';
+  const result = await apiPost(action, data);
+  if (result.success) {
+    closeModalById('purchaseModal');
+    showToast(t('saved_success'), 'success');
+    loadPurchases();
+  } else showToast(result.error || t('error'), 'error');
+}
+
+function editPurchase(purchaseId) {
+  const p = purchasesData.find(x => x.purchaseId === purchaseId);
+  if (!p) return;
+
+  document.getElementById('purPurchaseId').value = p.purchaseId;
+  setValue('pur_date', p.date); setValue('pur_itemName', p.itemName);
+  setValue('pur_category', p.category); setValue('pur_quantity', p.quantity);
+  setValue('pur_unit', p.unit); setValue('pur_price', p.price);
+  setValue('pur_totalCost', p.totalCost); setValue('pur_invoiceNumber', p.invoiceNumber);
+  setValue('pur_paid', p.paid); setValue('pur_remaining', p.remaining);
+  setValue('pur_notes', p.notes);
+
+  const supSelect = document.getElementById('pur_supplierId');
+  supSelect.innerHTML = '<option value="">اختر المورد</option>' +
+    suppliersData.map(s => `<option value="${escapeAttr(s.supplierId)}">${escapeHtml(s.name)}</option>`).join('');
+  supSelect.value = p.supplierId;
+
+  document.getElementById('purchaseTitle').textContent = 'تعديل المشترى';
+  document.getElementById('purchaseModal').classList.add('active');
+}
+
+function deletePurchase(id) {
+  showConfirm('هل تريد حذف هذا المشترى؟', async () => {
+    const res = await apiPost('deletePurchase', { id });
+    if (res.success) {
+      showToast(t('deleted_success'), 'success');
+      loadPurchases();
+    } else showToast(res.error || t('error'), 'error');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// أسعار المحروقات
+// ═══════════════════════════════════════════════════════════
+async function saveFuelPrices() {
+  const data = {
+    dieselPrice: getValue('setDieselPrice'),
+    petrolPrice: getValue('setPetrolPrice'),
+    oilPrice: getValue('setOilPrice')
+  };
+  const result = await apiPost('updateSettings', data);
+  if (result.success) showToast('✅ تم حفظ أسعار المحروقات', 'success');
+  else showToast(result.error || 'خطأ', 'error');
+}
+
+async function loadFuelPrices() {
+  const result = await apiGet('getFuelPrices');
+  if (result.success) {
+    setValue('setDieselPrice', result.data.dieselPrice);
+    setValue('setPetrolPrice', result.data.petrolPrice);
+    setValue('setOilPrice', result.data.oilPrice);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// المصروفات الموحدة
+// ═══════════════════════════════════════════════════════════
+async function loadConsolidatedExpenses() {
+  const from = getValue('consoFrom');
+  const to = getValue('consoTo');
+  const sourceType = getValue('consoType');
+  const res = await apiGet('getConsolidatedExpenses', { from, to, sourceType });
+  if (!res.success) return;
+  consoExpensesData = res.data || [];
+  renderConsolidatedExpenses();
+}
+
+function renderConsolidatedExpenses() {
+  const tbody = document.getElementById('consolidatedExpensesTable');
+  if (!tbody) return;
+
+  if (consoExpensesData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">
+      <i class="fas fa-coins" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+      لا توجد مصروفات — اضغط "إعادة تجميع"
+    </td></tr>`;
+    document.getElementById('consoTotal').textContent = '0 ر.ي';
+    return;
+  }
+
+  const typeColors = {
+    'وقود': 'tag-warning', 'عمال': 'tag-info', 'مواد': 'tag-success',
+    'مشتريات': 'tag-gray', 'يدوي': 'tag-danger'
+  };
+
+  let html = '';
+  let grandTotal = 0;
+  let sumFuel = 0, sumWorkers = 0, sumMaterials = 0, sumPurchases = 0, sumManual = 0;
+
+  consoExpensesData.forEach((e, i) => {
+    const amount = Number(e.amount) || 0;
+    grandTotal += amount;
+    if (e.sourceType === 'وقود') sumFuel += amount;
+    else if (e.sourceType === 'عمال') sumWorkers += amount;
+    else if (e.sourceType === 'مواد') sumMaterials += amount;
+    else if (e.sourceType === 'مشتريات') sumPurchases += amount;
+    else if (e.sourceType === 'يدوي') sumManual += amount;
+
+    const proj = projectsData.find(p => p.projectId === e.projectId);
+    html += `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(e.date)}</td>
+        <td><span class="tag ${typeColors[e.sourceType] || 'tag-gray'}">${escapeHtml(e.sourceType || '')}</span></td>
+        <td>${escapeHtml(e.description || '')}</td>
+        <td>${escapeHtml(e.category || '')}</td>
+        <td><strong style="color:var(--danger);">${amount.toLocaleString()}</strong> ر.ي</td>
+        <td>${escapeHtml(proj ? proj.name : '-')}</td>
+      </tr>`;
+  });
+
+  tbody.innerHTML = html;
+
+  document.getElementById('statFuelCost').textContent = formatCurrency(sumFuel);
+  document.getElementById('statWagesCost').textContent = formatCurrency(sumWorkers);
+  document.getElementById('statMaterialsCost').textContent = formatCurrency(sumMaterials);
+  document.getElementById('statPurchasesCost').textContent = formatCurrency(sumPurchases);
+  document.getElementById('statManualCost').textContent = formatCurrency(sumManual);
+  document.getElementById('statGrandTotal').textContent = formatCurrency(grandTotal);
+  document.getElementById('consoTotal').textContent = grandTotal.toLocaleString() + ' ر.ي';
+}
+
+async function rebuildExpenses() {
+  if (!confirm('سيتم مسح المصروفات التلقائية وإعادة تجميعها من:\n• المحروقات\n• رواتب العمال\n• المواد الموردة\n• المشتريات\n\nهل تريد المتابعة؟')) return;
+  showToast('⏳ جاري إعادة التجميع...', 'info');
+  const res = await apiPost('rebuildConsolidatedExpenses', {});
+  if (res.success) {
+    showToast('✅ ' + (res.message || 'تم التجميع'), 'success');
+    loadConsolidatedExpenses();
+  } else showToast(res.error || 'خطأ', 'error');
+}
+
+// ═══════════════════════════════════════════════════════════
+// التهيئة
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('road_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+  document.querySelector('#themeBtn i').className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+  applyTranslations();
+
+  document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+  document.getElementById('togglePassword').addEventListener('click', () => {
+    const input = document.getElementById('passwordInput');
+    const icon = document.querySelector('#togglePassword i');
+    if (input.type === 'password') {
+      input.type = 'text'; icon.className = 'fas fa-eye-slash';
+    } else {
+      input.type = 'password'; icon.className = 'fas fa-eye';
+    }
+  });
+
+  document.getElementById('langBtn').addEventListener('click', switchLang);
+  document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+  document.getElementById('logoutBtn').addEventListener('click', logout);
+  document.getElementById('refreshBtn').addEventListener('click', () => {
+    showToast(t('loading'), 'info');
+    loadDashboard(); loadProjects();
+  });
+
+  document.getElementById('menuToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
+  });
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      navigateTo(item.dataset.page);
+    });
+  });
+
+  document.getElementById('searchProjects')?.addEventListener('input', renderProjects);
+  document.getElementById('filterProjectStatus')?.addEventListener('change', renderProjects);
+
+  if (token) showApp();
+  console.log('🛣️ نظام شركة هندسة الطرقات - جاهز (v4.0.1)');
+});
+</script>
+</body>
+</html>
