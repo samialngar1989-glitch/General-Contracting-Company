@@ -1,3 +1,4 @@
+g
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -63,6 +64,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min
 .header-actions{display:flex;align-items:center;gap:10px}
 .icon-btn{width:42px;height:42px;border-radius:50%;border:none;background:var(--bg);color:var(--text);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative}
 .icon-btn:hover{background:var(--primary);color:#fff;transform:translateY(-2px)}
+.icon-btn.danger:hover{background:var(--danger)}
 
 .sidebar{position:fixed;top:var(--header-h);right:0;bottom:0;width:var(--sidebar-w);background:var(--bg-card);border-left:1px solid var(--border);overflow-y:auto;transition:transform .3s;z-index:90}
 .sidebar::-webkit-scrollbar{width:6px}
@@ -111,7 +113,6 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min
 .table tbody tr{transition:background .2s}
 .table tbody tr:hover{background:var(--bg-hover)}
 
-/* 🆕 ألوان الصيانة */
 .row-green{background:rgba(34,197,94,.12)!important;border-right:4px solid var(--success)}
 .row-green:hover{background:rgba(34,197,94,.2)!important}
 .row-red{background:rgba(239,68,68,.12)!important;border-right:4px solid var(--danger)}
@@ -196,7 +197,6 @@ html[data-theme="dark"] .tag-gray{background:rgba(148,163,184,.15);color:#cbd5e1
 .btn-icon.view:hover{background:var(--primary);color:#fff}
 .settings-info{padding:12px 15px;border-radius:var(--radius-sm);margin:15px 0;font-size:13px}
 
-/* 🆕 شاشات الحضور الجماعي */
 .attendance-header{display:flex;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:20px;padding:15px;background:var(--bg-hover);border-radius:var(--radius)}
 .attendance-header .form-input{max-width:200px}
 .attendance-table{width:100%;border-collapse:collapse;font-size:14px}
@@ -205,11 +205,7 @@ html[data-theme="dark"] .tag-gray{background:rgba(148,163,184,.15);color:#cbd5e1
 .attendance-table select{padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-family:inherit;font-size:13px;cursor:pointer}
 .attendance-table .worker-name{font-weight:700;color:var(--text)}
 .attendance-table .job{font-size:12px;color:var(--text-muted);margin-top:4px}
-.att-status-حاضر{color:var(--success);font-weight:700}
-.att-status-غائب{color:var(--danger);font-weight:700}
-.att-status-إجازة{color:var(--warning);font-weight:700}
 
-/* 🆕 كشف حساب المورد */
 .ledger-totals{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:20px}
 .ledger-item{padding:15px;border-radius:var(--radius-sm);text-align:center}
 .ledger-item.supplied{background:rgba(37,99,235,.1);border:2px solid var(--primary)}
@@ -221,7 +217,6 @@ html[data-theme="dark"] .tag-gray{background:rgba(148,163,184,.15);color:#cbd5e1
 .ledger-item.purchased .value{color:var(--danger)}
 .ledger-item.balance .value{color:var(--success)}
 
-/* شبكة الحضور الشهري */
 .monthly-grid{overflow-x:auto;font-size:12px}
 .monthly-grid table{border-collapse:collapse;width:100%;min-width:900px}
 .monthly-grid th,.monthly-grid td{border:1px solid var(--border);padding:6px 4px;text-align:center}
@@ -229,6 +224,13 @@ html[data-theme="dark"] .tag-gray{background:rgba(148,163,184,.15);color:#cbd5e1
 .monthly-grid .cell-حاضر{background:rgba(34,197,94,.2);color:var(--success);font-weight:700}
 .monthly-grid .cell-غائب{background:rgba(239,68,68,.2);color:var(--danger);font-weight:700}
 .monthly-grid .cell-إجازة{background:rgba(245,158,11,.2);color:var(--warning);font-weight:700}
+
+/* 🆕 بطاقات التقارير المتقدمة */
+.report-metric{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.metric-box{padding:18px;border-radius:12px;border-right:4px solid;background:var(--bg-hover)}
+.metric-box .label{font-size:13px;color:var(--text-muted);margin-bottom:6px}
+.metric-box .value{font-size:22px;font-weight:800}
+.metric-box .sub{font-size:12px;color:var(--text-muted);margin-top:4px}
 
 @media (max-width:900px){
   .sidebar{transform:translateX(100%)}
@@ -287,7 +289,7 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
         <i class="fas fa-sign-in-alt"></i><span>دخول</span>
       </button>
     </form>
-    <div class="login-footer">الإصدار 5.0.0 © 2026</div>
+    <div class="login-footer">الإصدار 6.0.0 © 2026</div>
   </div>
 </div>
 
@@ -298,9 +300,10 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
       <div class="header-logo"><i class="fas fa-road"></i><span>نظام الطرقات</span></div>
     </div>
     <div class="header-actions">
+      <button class="icon-btn" id="anomalyBtn" title="فحص الأخطاء"><i class="fas fa-shield-alt"></i></button>
       <button class="icon-btn" id="themeBtn" title="Theme"><i class="fas fa-moon"></i></button>
       <button class="icon-btn" id="refreshBtn" title="Refresh"><i class="fas fa-sync-alt"></i></button>
-      <button class="icon-btn" id="logoutBtn" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+      <button class="icon-btn danger" id="logoutBtn" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
     </div>
   </header>
 
@@ -344,7 +347,15 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
       <div class="nav-item" data-page="quality"><i class="fas fa-clipboard-check"></i><span>الجودة</span></div>
     </div>
     <div class="nav-section">
-      <div class="nav-section-title">التقارير</div>
+      <div class="nav-section-title">📊 التقارير المتقدمة</div>
+      <div class="nav-item" data-page="advanced-dashboard"><i class="fas fa-chart-pie"></i><span>لوحة متقدمة</span></div>
+      <div class="nav-item" data-page="profit-loss"><i class="fas fa-balance-scale"></i><span>أرباح المشاريع</span></div>
+      <div class="nav-item" data-page="equipment-cost"><i class="fas fa-calculator"></i><span>تكلفة المعدات</span></div>
+      <div class="nav-item" data-page="worker-productivity"><i class="fas fa-user-chart"></i><span>إنتاجية العمال</span></div>
+      <div class="nav-item" data-page="anomalies"><i class="fas fa-exclamation-circle"></i><span>كاشف الأخطاء</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">الإعدادات</div>
       <div class="nav-item" data-page="settings"><i class="fas fa-cog"></i><span>الإعدادات</span></div>
     </div>
   </aside>
@@ -554,7 +565,7 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
       </div></div>
     </div>
 
-    <!-- 🆕 سجل المعدات اليومي (بفترتين) -->
+    <!-- سجل المعدات اليومي -->
     <div class="page" id="page-daily-equip">
       <div class="page-header">
         <h1 class="page-title"><i class="fas fa-truck-monster"></i> سجل المعدات اليومي</h1>
@@ -576,7 +587,7 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
       </div></div>
     </div>
 
-    <!-- سجل العمال اليومي (خصم + حافز) -->
+    <!-- سجل العمال اليومي -->
     <div class="page" id="page-daily-workers">
       <div class="page-header">
         <h1 class="page-title"><i class="fas fa-user-clock"></i> سجل العمال اليومي</h1>
@@ -598,7 +609,7 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
       </div></div>
     </div>
 
-    <!-- 🆕 الحضور الجماعي -->
+    <!-- الحضور الجماعي -->
     <div class="page" id="page-attendance">
       <div class="page-header">
         <h1 class="page-title"><i class="fas fa-calendar-check"></i> الحضور الجماعي</h1>
@@ -607,7 +618,6 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
           <button class="btn btn-primary btn-auto" onclick="showMonthlyAttendance()"><i class="fas fa-calendar-alt"></i> التقرير الشهري</button>
         </div>
       </div>
-
       <div class="attendance-header">
         <label style="font-weight:700;">التاريخ:</label>
         <input type="date" class="form-input" id="attendanceDate" onchange="loadGroupAttendance()">
@@ -619,7 +629,6 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
           <i class="fas fa-info-circle"></i> عدّل الحالات ثم اضغط "حفظ الكل"
         </span>
       </div>
-
       <div class="card">
         <div class="table-wrapper">
           <table class="attendance-table">
@@ -742,6 +751,183 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
       </div></div>
     </div>
 
+    <!-- 🆕 لوحة تحكم متقدمة -->
+    <div class="page" id="page-advanced-dashboard">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-chart-pie"></i><span>لوحة متقدمة</span></h1>
+        <button class="btn btn-primary btn-auto" onclick="loadAdvancedDashboard()">
+          <i class="fas fa-sync-alt"></i> تحديث
+        </button>
+      </div>
+
+      <div class="stats-grid" id="advStats"></div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-balance-scale"></i><span>ملخص ربحية المشاريع النشطة</span></h3>
+          </div>
+          <div class="table-wrapper">
+            <table class="table">
+              <thead><tr>
+                <th>المشروع</th><th>المقبوضات</th><th>المصروفات</th>
+                <th>الربح</th><th>الهامش</th><th>الإنجاز</th>
+              </tr></thead>
+              <tbody id="advProjectsSummary"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-tools"></i><span>صيانة عاجلة</span></h3>
+          </div>
+          <div class="table-wrapper">
+            <table class="table">
+              <thead><tr>
+                <th>المعدة</th><th>التاريخ</th><th>الصيانة القادمة</th><th>الحالة</th>
+              </tr></thead>
+              <tbody id="advUrgentMaint"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title"><i class="fas fa-handshake"></i><span>أعلى 5 موردين بالمستحقات</span></h3>
+        </div>
+        <div class="table-wrapper">
+          <table class="table">
+            <thead><tr>
+              <th>المورد</th><th>النوع</th><th>التوريدات</th>
+              <th>المشتريات</th><th>المدفوع</th><th>صافي المستحق</th>
+            </tr></thead>
+            <tbody id="advTopSuppliers"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🆕 تحليل أرباح المشاريع -->
+    <div class="page" id="page-profit-loss">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-balance-scale"></i><span>تحليل أرباح المشاريع</span></h1>
+      </div>
+
+      <div class="filter-row" style="background:var(--bg-card);padding:15px;border-radius:var(--radius);border:1px solid var(--border);">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">المشروع</label>
+          <select class="form-select" id="plProject" onchange="loadProjectPL()" style="min-width:280px;">
+            <option value="">اختر المشروع</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="plContent">
+        <div class="empty-state">
+          <i class="fas fa-chart-line"></i>
+          <h3>اختر مشروعاً لعرض التحليل</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🆕 تكلفة المعدات -->
+    <div class="page" id="page-equipment-cost">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-calculator"></i><span>تكلفة المعدات الفعلية</span></h1>
+      </div>
+
+      <div class="filter-row" style="background:var(--bg-card);padding:15px;border-radius:var(--radius);border:1px solid var(--border);">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">المعدة</label>
+          <select class="form-select" id="ecEquip" style="min-width:220px;">
+            <option value="">اختر المعدة</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">من</label>
+          <input type="date" class="form-input" id="ecFrom">
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">إلى</label>
+          <input type="date" class="form-input" id="ecTo">
+        </div>
+        <button class="btn btn-primary btn-auto" onclick="loadEquipmentCost()">
+          <i class="fas fa-search"></i> تحليل
+        </button>
+      </div>
+
+      <div id="ecContent">
+        <div class="empty-state">
+          <i class="fas fa-truck-monster"></i>
+          <h3>اختر معدة لعرض تحليل التكلفة</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🆕 إنتاجية العمال -->
+    <div class="page" id="page-worker-productivity">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-user-chart"></i><span>إنتاجية العمال</span></h1>
+      </div>
+
+      <div class="filter-row" style="background:var(--bg-card);padding:15px;border-radius:var(--radius);border:1px solid var(--border);">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">من</label>
+          <input type="date" class="form-input" id="wpFrom">
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">إلى</label>
+          <input type="date" class="form-input" id="wpTo">
+        </div>
+        <button class="btn btn-primary btn-auto" onclick="loadWorkerProductivity()">
+          <i class="fas fa-search"></i> عرض
+        </button>
+      </div>
+
+      <div class="stats-grid" id="wpStats"></div>
+
+      <div class="card">
+        <div class="table-wrapper">
+          <table class="table">
+            <thead><tr>
+              <th>#</th><th>الاسم</th><th>الوظيفة</th><th>حاضر</th><th>غائب</th>
+              <th>إجازة</th><th>نسبة الالتزام</th><th>ساعات</th><th>إضافي</th>
+              <th>خصم</th><th>حافز</th><th>صافي</th>
+            </tr></thead>
+            <tbody id="wpTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🆕 كاشف الأخطاء -->
+    <div class="page" id="page-anomalies">
+      <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-exclamation-circle"></i><span>كاشف الأخطاء والتناقضات</span></h1>
+        <button class="btn btn-warning btn-auto" onclick="loadAnomalies()">
+          <i class="fas fa-search"></i> فحص الآن
+        </button>
+      </div>
+
+      <div class="stats-grid" id="anomalyStats"></div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title"><i class="fas fa-list-ul"></i><span>قائمة المشاكل المكتشفة</span></h3>
+        </div>
+        <div class="table-wrapper">
+          <table class="table">
+            <thead><tr>
+              <th>#</th><th>الخطورة</th><th>النوع</th><th>الوصف</th><th>المراجع</th>
+            </tr></thead>
+            <tbody id="anomaliesTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- الإعدادات -->
     <div class="page" id="page-settings">
       <div class="page-header"><h1 class="page-title"><i class="fas fa-cog"></i><span>الإعدادات</span></h1></div>
@@ -821,7 +1007,7 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
   </div>
 </div>
 
-<!-- 🆕 نافذة المعدات (مع الحقول الجديدة) -->
+<!-- نافذة المعدات -->
 <div class="modal-overlay" id="equipmentModal">
   <div class="modal">
     <div class="modal-header">
@@ -864,6 +1050,14 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
           </select></div>
       </div>
       <div class="form-group"><label class="form-label">اسم المالك</label><input type="text" class="form-input" id="equip_owner" placeholder="اسم الشركة أو الشخص"></div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">نوع الاستخدام</label>
+          <select class="form-select" id="equip_usageType">
+            <option value="مملوكة" selected>مملوكة</option>
+            <option value="إيجار">إيجار</option>
+          </select></div>
+        <div class="form-group"><label class="form-label">سعر الساعة (للإيجار)</label><input type="number" class="form-input" id="equip_hourlyRate" placeholder="0"></div>
+      </div>
       <div class="grid-2">
         <div class="form-group"><label class="form-label">تاريخ بداية العمل</label><input type="date" class="form-input" id="equip_workStartDate"></div>
         <div class="form-group"><label class="form-label">سعر الشراء (ر.ي)</label><input type="number" class="form-input" id="equip_purchasePrice"></div>
@@ -1061,7 +1255,7 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
   </div>
 </div>
 
-<!-- 🆕 نافذة كشف حساب المورد -->
+<!-- نافذة كشف حساب المورد -->
 <div class="modal-overlay" id="ledgerModal">
   <div class="modal modal-lg">
     <div class="modal-header">
@@ -1143,7 +1337,7 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
   </div>
 </div>
 
-<!-- 🆕 نافذة سجل المعدات اليومي (فترتان) -->
+<!-- نافذة سجل المعدات اليومي -->
 <div class="modal-overlay" id="dailyEquipModal">
   <div class="modal modal-lg">
     <div class="modal-header">
@@ -1163,13 +1357,11 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
         <div class="form-group"><label class="form-label">الموقع</label><input type="text" class="form-input" id="del_siteId"></div>
         <div class="form-group"><label class="form-label">المشغل</label><input type="text" class="form-input" id="del_operator"></div>
       </div>
-      <!-- الفترة الصباحية -->
       <h4 style="color:var(--primary);margin:15px 0 10px;">☀️ الفترة الصباحية</h4>
       <div class="grid-2">
         <div class="form-group"><label class="form-label">من</label><input type="time" class="form-input" id="del_morningFrom"></div>
         <div class="form-group"><label class="form-label">إلى</label><input type="time" class="form-input" id="del_morningTo"></div>
       </div>
-      <!-- الفترة المسائية -->
       <h4 style="color:var(--primary);margin:15px 0 10px;">🌙 الفترة المسائية</h4>
       <div class="grid-2">
         <div class="form-group"><label class="form-label">من</label><input type="time" class="form-input" id="del_eveningFrom"></div>
@@ -1190,7 +1382,7 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
   </div>
 </div>
 
-<!-- 🆕 نافذة سجل العمال اليومي (خصم + حافز) -->
+<!-- نافذة سجل العمال اليومي -->
 <div class="modal-overlay" id="dailyWorkerModal">
   <div class="modal modal-lg">
     <div class="modal-header">
@@ -1270,7 +1462,8 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
         <div class="form-group"><label class="form-label">الكمية الإجمالية</label><input type="number" class="form-input" id="ms_totalQuantity" readonly style="background:var(--bg-hover);font-weight:800;color:var(--success);"></div>
       </div>
       <div class="grid-3">
-        <div class="form-group"><label class="form-label">السائق</label><input type="text" class="form-input" id="ms_driverName"></div>
+        <div class="form-group"><label class="form-label">السائق</label>
+          <select class="form-select" id="ms_driverName"><option value="">اختر السائق</option></select></div>
         <div class="form-group"><label class="form-label">رقم الشاحنة</label><input type="text" class="form-input" id="ms_truckNumber"></div>
         <div class="form-group"><label class="form-label">التكلفة (ر.ي)</label><input type="number" class="form-input" id="ms_cost"></div>
       </div>
@@ -1504,7 +1697,7 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
   </div>
 </div>
 
-<!-- 🆕 نافذة التقرير الشهري للحضور -->
+<!-- نافذة التقرير الشهري للحضور -->
 <div class="modal-overlay" id="monthlyAttendanceModal">
   <div class="modal modal-lg">
     <div class="modal-header">
@@ -1557,7 +1750,7 @@ html[dir="ltr"] .nav-item.active{border-right:none;border-left-color:var(--prima
 // ⚙️ الإعدادات
 // ═══════════════════════════════════════════════════════════
 const CONFIG = {
-  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwc4j34SN6L3Wxux_bxF1qCASRopEwdBf2YJ0yDUmfEAJGeHWku-_nlS7Z9-Kht9dD2/exec',
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwxUKGLtXEEm-ov9e6VWeqHHJRyVkIxbpAjm6IdDutz1Oc4tXTObvsXlGi6lMlOxuyvLw/exec',
   DEFAULT_LANG: 'ar'
 };
 
@@ -1744,6 +1937,8 @@ function navigateTo(page) {
     case 'material-supply':
       setValue('filterSupplyDate', today);
       fillProjectFilter('filterSupplyProject');
+      loadMaterials();
+      loadSuppliers();
       loadMaterialSupply();
       break;
     case 'fuel':
@@ -1755,6 +1950,17 @@ function navigateTo(page) {
       loadPurchases();
       break;
     case 'consolidated-expenses': loadConsolidatedExpenses(); break;
+    // 🆕 الصفحات المتقدمة
+    case 'advanced-dashboard': loadAdvancedDashboard(); break;
+    case 'profit-loss':
+      fillProjectSelect('plProject');
+      loadProjectPL();
+      break;
+    case 'equipment-cost':
+      loadEquipmentForCost();
+      break;
+    case 'worker-productivity': loadWorkerProductivity(); break;
+    case 'anomalies': loadAnomalies(); break;
   }
 }
 
@@ -2002,6 +2208,8 @@ function openEquipmentModal(equipId) {
   setValue('equip_operator', e ? e.operator : '');
   setValue('equip_owner', e ? e.owner : '');
   setValue('equip_ownerType', e ? e.ownerType : 'شركة');
+  setValue('equip_usageType', e ? e.usageType : 'مملوكة');
+  setValue('equip_hourlyRate', e ? e.hourlyRate : '');
   setValue('equip_workStartDate', e ? e.workStartDate : '');
   setValue('equip_attachments', e ? e.attachments : '');
   setValue('equip_purchasePrice', e ? e.purchasePrice : '');
@@ -2019,6 +2227,7 @@ async function saveEquipment() {
     status: getValue('equip_status'), currentSite: getValue('equip_currentSite'),
     operator: getValue('equip_operator'),
     owner: getValue('equip_owner'), ownerType: getValue('equip_ownerType'),
+    usageType: getValue('equip_usageType'), hourlyRate: getValue('equip_hourlyRate'),
     workStartDate: getValue('equip_workStartDate'),
     attachments: getValue('equip_attachments'),
     purchasePrice: getValue('equip_purchasePrice'),
@@ -2042,7 +2251,7 @@ function deleteEquipment(id) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// 🔧 الصيانة (مع ألوان)
+// 🔧 الصيانة
 // ═══════════════════════════════════════════════════════════
 async function loadMaintenance() {
   const res = await apiGet('getMaintenance');
@@ -2212,34 +2421,17 @@ async function loadMaterials() {
   }).join('');
 }
 
-function openMaterialSupplyModal() {
-  document.getElementById('msSupplyId').value = '';
-  ['ms_fromLocation','ms_toSiteId','ms_zafatCount','ms_zafaSize','ms_totalQuantity','ms_truckNumber','ms_cost','ms_notes'].forEach(id => setValue(id, ''));
-  setValue('ms_date', new Date().toISOString().split('T')[0]);
-  
-  const matSelect = document.getElementById('ms_matId');
-  matSelect.innerHTML = '<option value="">اختر</option>' +
-    materialsData.map(m => `<option value="${escapeAttr(m.matId)}" data-unit="${escapeAttr(m.unit || '')}" data-name="${escapeAttr(m.name || '')}" data-price="${escapeAttr(m.price || 0)}">${escapeHtml(m.name)}</option>`).join('');
-  
-  const projSelect = document.getElementById('ms_toProjectId');
-  projSelect.innerHTML = '<option value="">اختر</option>' +
-    projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
-  
-  const supSelect = document.getElementById('ms_supplierId');
-  supSelect.innerHTML = '<option value="">اختر</option>' +
-    suppliersData.map(s => `<option value="${escapeAttr(s.supplierId)}">${escapeHtml(s.name)}</option>`).join('');
-  
-  // 🆕 قائمة السائقين من Workers
-  const driverSelect = document.getElementById('ms_driverName');
-  if (driverSelect) {
-    if (driverSelect.tagName === 'SELECT') {
-      driverSelect.innerHTML = '<option value="">اختر السائق</option>' +
-        workersData.filter(w => w.job && w.job.includes('سائق'))
-          .map(w => `<option value="${escapeAttr(w.name)}" data-workerId="${escapeAttr(w.workerId)}">${escapeHtml(w.name)}</option>`).join('');
-    }
-  }
-  
-  document.getElementById('materialSupplyModal').classList.add('active');
+function openMaterialModal(matId) {
+  document.getElementById('matId').value = matId || '';
+  const m = matId ? materialsData.find(x => x.matId === matId) : null;
+  setValue('mat_name', m ? m.name : '');
+  setValue('mat_unit', m ? m.unit : 'م³');
+  setValue('mat_price', m ? m.price : '');
+  setValue('mat_stock', m ? m.stock : '0');
+  setValue('mat_minStock', m ? m.minStock : '');
+  setValue('mat_location', m ? m.location : '');
+  document.getElementById('materialModalTitle').textContent = m ? 'تعديل المادة' : 'إضافة مادة';
+  document.getElementById('materialModal').classList.add('active');
 }
 
 async function saveMaterial() {
@@ -2266,7 +2458,7 @@ function deleteMaterial(id) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// 🏪 الموردين (مع الأرصدة وكشف الحساب)
+// 🏪 الموردين
 // ═══════════════════════════════════════════════════════════
 async function loadSuppliers() {
   const res = await apiGet('getSuppliers');
@@ -2346,9 +2538,9 @@ async function showSupplierLedger(supplierId) {
   const d = res.data;
   let html = `
     <div class="ledger-totals">
-      <div class="ledger-item supplied"><h4>إجمالي التوريدات</h4><div class="value">${formatNum(d.totals.supplied)}</div></div>
-      <div class="ledger-item purchased"><h4>إجمالي المشتريات (تُخصم)</h4><div class="value">${formatNum(d.totals.purchased)}</div></div>
-      <div class="ledger-item balance"><h4>الرصيد الحالي</h4><div class="value">${formatNum(d.totals.balance)} ر.ي</div></div>
+      <div class="ledger-item supplied"><h4>إجمالي التوريدات (له)</h4><div class="value">${formatNum(d.totals.supplied)}</div></div>
+      <div class="ledger-item purchased"><h4>المشتريات (له)</h4><div class="value">${formatNum(d.totals.purchased)}</div></div>
+      <div class="ledger-item balance"><h4>صافي المستحق</h4><div class="value">${formatNum(d.totals.netDue || d.totals.balance)} ر.ي</div></div>
     </div>
     <div class="table-wrapper" style="max-height:400px;overflow:auto;">
       <table class="table">
@@ -2360,7 +2552,6 @@ async function showSupplierLedger(supplierId) {
   } else {
     d.ledger.forEach((row, i) => {
       const cost = Number(row.cost) || 0;
-      const isNeg = cost < 0;
       const tag = row.type === 'توريد' ? 'tag-info' : 'tag-danger';
       html += `<tr>
         <td>${i+1}</td>
@@ -2369,8 +2560,8 @@ async function showSupplierLedger(supplierId) {
         <td>${escapeHtml(row.matName || '')}</td>
         <td>${row.totalQuantity || ''}</td>
         <td>${escapeHtml(row.unit || '')}</td>
-        <td style="font-weight:700;color:${isNeg ? 'var(--danger)' : 'var(--primary)'};">
-          ${formatNum(Math.abs(cost))} ${isNeg ? '(خ)' : ''}
+        <td style="font-weight:700;color:${row.type === 'مشترى' ? 'var(--danger)' : 'var(--primary)'};">
+          ${formatNum(cost)} ر.ي
         </td>
       </tr>`;
     });
@@ -2646,7 +2837,7 @@ async function saveProgress() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// 🚜 سجل المعدات اليومي (فترتان)
+// 🚜 سجل المعدات اليومي
 // ═══════════════════════════════════════════════════════════
 async function loadDailyEquipLog() {
   const date = getValue('filterEquipDate');
@@ -2759,7 +2950,7 @@ function deleteDailyEquip(id) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// 👷 سجل العمال اليومي (خصم + حافز)
+// 👷 سجل العمال اليومي
 // ═══════════════════════════════════════════════════════════
 async function loadDailyWorkersLog() {
   const date = getValue('filterWorkerDate');
@@ -2891,7 +3082,6 @@ function deleteDailyWorker(id) {
 async function loadGroupAttendance() {
   const date = getValue('attendanceDate');
   if (!date) return;
-  // تحميل العمال + سجلات اليوم
   await loadWorkers();
   const res = await apiGet('getDailyWorkersLog', { date });
   const dayLogs = res.success ? (res.data || []) : [];
@@ -3050,37 +3240,45 @@ async function loadMaterialSupply() {
   `).join('');
 }
 
-function openMaterialSupplyModal() {
+async function openMaterialSupplyModal() {
+  if (materialsData.length === 0) await loadMaterials();
+  if (suppliersData.length === 0) await loadSuppliers();
+  if (workersData.length === 0) await loadWorkers();
+
   document.getElementById('msSupplyId').value = '';
-  ['ms_fromLocation','ms_toSiteId','ms_zafatCount','ms_zafaSize','ms_totalQuantity','ms_driverName','ms_truckNumber','ms_cost','ms_notes'].forEach(id => setValue(id, ''));
+  ['ms_fromLocation','ms_toSiteId','ms_zafatCount','ms_zafaSize','ms_totalQuantity','ms_truckNumber','ms_cost','ms_notes'].forEach(id => setValue(id, ''));
   setValue('ms_date', new Date().toISOString().split('T')[0]);
+
   const matSelect = document.getElementById('ms_matId');
   matSelect.innerHTML = '<option value="">اختر</option>' +
-    materialsData.map(m => `<option value="${escapeAttr(m.matId)}" data-unit="${escapeAttr(m.unit || '')}" data-name="${escapeAttr(m.name || '')}">${escapeHtml(m.name)}</option>`).join('');
+    materialsData.map(m => `<option value="${escapeAttr(m.matId)}" data-unit="${escapeAttr(m.unit || '')}" data-name="${escapeAttr(m.name || '')}" data-price="${escapeAttr(m.price || 0)}">${escapeHtml(m.name)}</option>`).join('');
+
   const projSelect = document.getElementById('ms_toProjectId');
   projSelect.innerHTML = '<option value="">اختر</option>' +
     projectsData.map(p => `<option value="${escapeAttr(p.projectId)}">${escapeHtml(p.name)}</option>`).join('');
+
   const supSelect = document.getElementById('ms_supplierId');
   supSelect.innerHTML = '<option value="">اختر</option>' +
     suppliersData.map(s => `<option value="${escapeAttr(s.supplierId)}">${escapeHtml(s.name)}</option>`).join('');
+
+  const driverSelect = document.getElementById('ms_driverName');
+  const drivers = workersData.filter(w => w.job && w.job.includes('سائق'));
+  driverSelect.innerHTML = '<option value="">اختر السائق</option>' +
+    drivers.map(w => `<option value="${escapeAttr(w.name)}">${escapeHtml(w.name)}</option>`).join('');
+
   document.getElementById('materialSupplyModal').classList.add('active');
 }
 
 function fillMaterialName() {
   const sel = document.getElementById('ms_matId');
   const opt = sel.options[sel.selectedIndex];
-  if (opt) {
-    if (opt.dataset.unit) document.getElementById('ms_unit').value = opt.dataset.unit;
-    // 🆕 ملء السعر تلقائياً
-    if (opt.dataset.price && !getValue('ms_cost')) {
-      const price = Number(opt.dataset.price) || 0;
-      const qty = Number(getValue('ms_totalQuantity')) || 0;
-      if (qty > 0) {
-        setValue('ms_cost', price * qty);
-      } else {
-        setValue('ms_cost', price);
-      }
-    }
+  if (!opt) return;
+  if (opt.dataset.unit) document.getElementById('ms_unit').value = opt.dataset.unit;
+
+  const price = Number(opt.dataset.price) || 0;
+  const qty = Number(getValue('ms_totalQuantity')) || 0;
+  if (price && qty) {
+    setValue('ms_cost', price * qty);
   }
 }
 
@@ -3089,10 +3287,9 @@ function calcSupplyTotal() {
   const size = Number(getValue('ms_zafaSize')) || 0;
   const total = count * size;
   setValue('ms_totalQuantity', total);
-  
-  // 🆕 حساب التكلفة تلقائياً من سعر المادة
-  const matSelect = document.getElementById('ms_matId');
-  const opt = matSelect.options[matSelect.selectedIndex];
+
+  const sel = document.getElementById('ms_matId');
+  const opt = sel.options[sel.selectedIndex];
   if (opt && opt.dataset.price) {
     const price = Number(opt.dataset.price) || 0;
     setValue('ms_cost', price * total);
@@ -3138,7 +3335,7 @@ function editMaterialSupply(supplyId) {
   setValue('ms_notes', s.notes);
   const matSelect = document.getElementById('ms_matId');
   matSelect.innerHTML = '<option value="">اختر</option>' +
-    materialsData.map(m => `<option value="${escapeAttr(m.matId)}" data-unit="${escapeAttr(m.unit || '')}" data-name="${escapeAttr(m.name || '')}">${escapeHtml(m.name)}</option>`).join('');
+    materialsData.map(m => `<option value="${escapeAttr(m.matId)}" data-unit="${escapeAttr(m.unit || '')}" data-name="${escapeAttr(m.name || '')}" data-price="${escapeAttr(m.price || 0)}">${escapeHtml(m.name)}</option>`).join('');
   matSelect.value = s.matId;
   const projSelect = document.getElementById('ms_toProjectId');
   projSelect.innerHTML = '<option value="">اختر</option>' +
@@ -3148,6 +3345,11 @@ function editMaterialSupply(supplyId) {
   supSelect.innerHTML = '<option value="">اختر</option>' +
     suppliersData.map(x => `<option value="${escapeAttr(x.supplierId)}">${escapeHtml(x.name)}</option>`).join('');
   supSelect.value = s.supplierId;
+  const driverSelect = document.getElementById('ms_driverName');
+  const drivers = workersData.filter(w => w.job && w.job.includes('سائق'));
+  driverSelect.innerHTML = '<option value="">اختر السائق</option>' +
+    drivers.map(w => `<option value="${escapeAttr(w.name)}">${escapeHtml(w.name)}</option>`).join('');
+  driverSelect.value = s.driverName;
   document.getElementById('materialSupplyModal').classList.add('active');
 }
 
@@ -3352,7 +3554,7 @@ async function loadConsolidatedExpenses() {
     return;
   }
 
-  const typeColors = { 'وقود': 'tag-warning', 'عمال': 'tag-info', 'مواد': 'tag-success', 'مشتريات': 'tag-gray', 'يدوي': 'tag-danger' };
+  const typeColors = { 'وقود': 'tag-warning', 'عمال': 'tag-info', 'مواد': 'tag-success', 'مشتريات': 'tag-gray', 'يدوي': 'tag-danger', 'إيجار': 'tag-warning' };
   let html = '';
   let grandTotal = 0;
   let sumFuel = 0, sumWorkers = 0, sumMaterials = 0, sumPurchases = 0, sumManual = 0;
@@ -3419,6 +3621,354 @@ async function loadFuelPrices() {
 }
 
 // ═══════════════════════════════════════════════════════════
+// 🆕 التقارير المتقدمة
+// ═══════════════════════════════════════════════════════════
+
+async function loadAdvancedDashboard() {
+  const res = await apiGet('getAdvancedDashboard');
+  if (!res.success) { showToast('فشل التحميل', 'error'); return; }
+  const d = res.data;
+
+  const statsEl = document.getElementById('advStats');
+  statsEl.innerHTML = `
+    <div class="stat-card">
+      <div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+      <div class="stat-info"><h3>${d.anomalies.total}</h3><p>إجمالي المشاكل</p></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange"><i class="fas fa-fire"></i></div>
+      <div class="stat-info"><h3>${d.anomalies.high}</h3><p>مشاكل حرجة</p></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon gold"><i class="fas fa-exclamation"></i></div>
+      <div class="stat-info"><h3>${d.anomalies.medium}</h3><p>مشاكل متوسطة</p></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fas fa-road"></i></div>
+      <div class="stat-info"><h3>${d.projectsSummary.length}</h3><p>مشاريع نشطة</p></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon cyan"><i class="fas fa-tools"></i></div>
+      <div class="stat-info"><h3>${d.urgentMaintenance.length}</h3><p>صيانة عاجلة</p></div>
+    </div>
+  `;
+
+  const pEl = document.getElementById('advProjectsSummary');
+  pEl.innerHTML = d.projectsSummary.length === 0
+    ? '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted);">لا توجد مشاريع نشطة</td></tr>'
+    : d.projectsSummary.map(p => `
+      <tr>
+        <td><strong>${escapeHtml(p.name)}</strong></td>
+        <td style="color:var(--success);">${formatCurrency(p.revenue)}</td>
+        <td style="color:var(--danger);">${formatCurrency(p.expenses)}</td>
+        <td style="color:${p.grossProfit >= 0 ? 'var(--success)' : 'var(--danger)'};font-weight:800;">
+          ${formatCurrency(p.grossProfit)}
+        </td>
+        <td><span class="tag ${p.marginPercent >= 20 ? 'tag-success' : p.marginPercent >= 0 ? 'tag-warning' : 'tag-danger'}">
+          ${p.marginPercent}%
+        </span></td>
+        <td>${p.progress}%</td>
+      </tr>
+    `).join('');
+
+  const mEl = document.getElementById('advUrgentMaint');
+  if (d.urgentMaintenance.length === 0) {
+    mEl.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:30px;color:var(--text-muted);">لا توجد صيانة عاجلة ✅</td></tr>';
+  } else {
+    const equipData = await apiGet('getEquipment');
+    const equipMap = {};
+    if (equipData.success) equipData.data.forEach(e => equipMap[e.equipId] = e.name);
+    mEl.innerHTML = d.urgentMaintenance.map(m => `
+      <tr>
+        <td><strong>${escapeHtml(equipMap[m.equipId] || m.equipId)}</strong></td>
+        <td>${escapeHtml(m.date)}</td>
+        <td>${escapeHtml(m.nextDate || '-')}</td>
+        <td>${m.colorStatus === 'red' ? '<span class="tag tag-danger">🔴 عاجلة</span>' :
+              '<span class="tag tag-warning">🟡 قريبة</span>'}</td>
+      </tr>
+    `).join('');
+  }
+
+  const sEl = document.getElementById('advTopSuppliers');
+  sEl.innerHTML = d.topSuppliers.map(s => `
+    <tr>
+      <td><strong>${escapeHtml(s.name)}</strong></td>
+      <td><span class="tag tag-info">${escapeHtml(s.type || '')}</span></td>
+      <td style="color:var(--primary);">${formatNum(s.suppliedTotal)}</td>
+      <td style="color:var(--danger);">${formatNum(s.purchasedTotal)}</td>
+      <td style="color:var(--success);">${formatNum(s.paidTotal || 0)}</td>
+      <td style="color:var(--warning);font-weight:800;">${formatNum(s.currentBalance)}</td>
+    </tr>
+  `).join('');
+}
+
+async function loadProjectPL() {
+  const projectId = getValue('plProject');
+  if (!projectId) {
+    document.getElementById('plContent').innerHTML = `
+      <div class="empty-state"><i class="fas fa-chart-line"></i><h3>اختر مشروعاً لعرض التحليل</h3></div>`;
+    return;
+  }
+  document.getElementById('plContent').innerHTML = '<div style="text-align:center;padding:40px;"><span class="loader" style="border-top-color:var(--primary);"></span></div>';
+
+  const res = await apiGet('getProjectProfitLoss', { projectId });
+  if (!res.success) { showToast(res.error || 'خطأ', 'error'); return; }
+  const d = res.data;
+
+  const expRows = Object.entries(d.expenses.byType).map(([k, v]) => `
+    <tr>
+      <td><span class="tag tag-gray">${escapeHtml(k)}</span></td>
+      <td style="color:var(--danger);font-weight:700;">${formatNum(v)} ر.ي</td>
+      <td>${d.expenses.total > 0 ? ((v / d.expenses.total) * 100).toFixed(1) : 0}%</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('plContent').innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-road"></i><span>${escapeHtml(d.project.name)}</span></h3>
+        ${statusBadge(d.project.status)}
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-file-invoice"></i></div>
+        <div class="stat-info"><h3>${formatCurrency(d.revenue.billed)}</h3><p>إجمالي الفواتير</p></div></div>
+      <div class="stat-card"><div class="stat-icon green"><i class="fas fa-money-bill-wave"></i></div>
+        <div class="stat-info"><h3>${formatCurrency(d.revenue.collected)}</h3><p>المقبوضات</p></div></div>
+      <div class="stat-card"><div class="stat-icon red"><i class="fas fa-clock"></i></div>
+        <div class="stat-info"><h3>${formatCurrency(d.revenue.receivables)}</h3><p>المستحقات</p></div></div>
+      <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-receipt"></i></div>
+        <div class="stat-info"><h3>${formatCurrency(d.expenses.total)}</h3><p>المصروفات</p></div></div>
+      <div class="stat-card"><div class="stat-icon ${d.metrics.grossProfit >= 0 ? 'green' : 'red'}">
+        <i class="fas fa-chart-line"></i></div>
+        <div class="stat-info"><h3>${formatCurrency(d.metrics.grossProfit)}</h3><p>الربح الإجمالي</p></div></div>
+      <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-percent"></i></div>
+        <div class="stat-info"><h3>${d.metrics.marginPercent}%</h3><p>هامش الربح</p></div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><h3 class="card-title"><i class="fas fa-chart-pie"></i><span>توزيع المصروفات</span></h3></div>
+        <div class="table-wrapper">
+          <table class="table">
+            <thead><tr><th>النوع</th><th>المبلغ</th><th>النسبة</th></tr></thead>
+            <tbody>${expRows || '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);">لا توجد مصروفات</td></tr>'}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3 class="card-title"><i class="fas fa-tasks"></i><span>مؤشرات الأداء</span></h3></div>
+        <div class="card-body">
+          <div style="display:flex;flex-direction:column;gap:15px;">
+            <div><strong>قيمة العقد:</strong> ${formatNum(d.metrics.contractValue)} ر.ي</div>
+            <div><strong>الميزانية المتبقية:</strong>
+              <span style="color:${d.metrics.remainingBudget >= 0 ? 'var(--success)' : 'var(--danger)'};font-weight:800;">
+                ${formatNum(d.metrics.remainingBudget)} ر.ي</span>
+            </div>
+            <div><strong>معدل الاستهلاك:</strong> ${d.metrics.burnRatePercent}% من العقد</div>
+            <div><strong>إجمالي الإنجاز:</strong> ${d.progress.totalKm} كم</div>
+            <div><strong>التكلفة/كم:</strong> ${formatNum(d.progress.costPerKm)} ر.ي</div>
+            <div><strong>الإيراد/كم:</strong> ${formatNum(d.progress.valuePerKm)} ر.ي</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function loadEquipmentForCost() {
+  await loadEquipment();
+  const sel = document.getElementById('ecEquip');
+  if (sel) sel.innerHTML = '<option value="">اختر المعدة</option>' +
+    equipmentData.map(e => `<option value="${escapeAttr(e.equipId)}">${escapeHtml(e.name)}</option>`).join('');
+}
+
+async function loadEquipmentCost() {
+  const equipId = getValue('ecEquip');
+  if (!equipId) { showToast('اختر معدة', 'warning'); return; }
+  document.getElementById('ecContent').innerHTML = '<div style="text-align:center;padding:40px;"><span class="loader" style="border-top-color:var(--primary);"></span></div>';
+
+  const res = await apiGet('getEquipmentCostAnalysis', {
+    equipId, from: getValue('ecFrom'), to: getValue('ecTo')
+  });
+  if (!res.success) { showToast(res.error || 'خطأ', 'error'); return; }
+  const d = res.data;
+  const bd = d.breakdown;
+  const sum = bd.rent + bd.diesel + bd.maintenance + bd.depreciation || 1;
+
+  document.getElementById('ecContent').innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-truck-monster"></i><span>${escapeHtml(d.name)}</span></h3>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-clock"></i></div>
+        <div class="stat-info"><h3>${d.totalHours}</h3><p>ساعات العمل</p></div></div>
+      <div class="stat-card"><div class="stat-icon cyan"><i class="fas fa-calendar"></i></div>
+        <div class="stat-info"><h3>${d.uniqueDays}</h3><p>أيام عمل</p></div></div>
+      <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-tachometer-alt"></i></div>
+        <div class="stat-info"><h3>${d.utilizationPercent}%</h3><p>معدل الاستغلال</p></div></div>
+      <div class="stat-card"><div class="stat-icon red"><i class="fas fa-coins"></i></div>
+        <div class="stat-info"><h3>${formatCurrency(d.totalCost)}</h3><p>التكلفة الإجمالية</p></div></div>
+      <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-hourglass"></i></div>
+        <div class="stat-info"><h3>${formatNum(d.costPerHour)}</h3><p>التكلفة/ساعة</p></div></div>
+      <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-gas-pump"></i></div>
+        <div class="stat-info"><h3>${d.fuelPerUnit}</h3><p>استهلاك الوقود</p></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3 class="card-title"><i class="fas fa-chart-pie"></i><span>تفصيل التكلفة</span></h3></div>
+      <div class="card-body">
+        <div class="report-metric">
+          <div class="metric-box" style="border-right-color:var(--primary);background:rgba(37,99,235,.08);">
+            <div class="label">إيجار معدات</div>
+            <div class="value" style="color:var(--primary);">${formatNum(bd.rent)} ر.ي</div>
+            <div class="sub">${((bd.rent / sum) * 100).toFixed(1)}%</div>
+          </div>
+          <div class="metric-box" style="border-right-color:var(--danger);background:rgba(239,68,68,.08);">
+            <div class="label">ديزل</div>
+            <div class="value" style="color:var(--danger);">${formatNum(bd.diesel)} ر.ي</div>
+            <div class="sub">${((bd.diesel / sum) * 100).toFixed(1)}%</div>
+          </div>
+          <div class="metric-box" style="border-right-color:var(--warning);background:rgba(245,158,11,.08);">
+            <div class="label">صيانة</div>
+            <div class="value" style="color:var(--warning);">${formatNum(bd.maintenance)} ر.ي</div>
+            <div class="sub">${((bd.maintenance / sum) * 100).toFixed(1)}%</div>
+          </div>
+          <div class="metric-box" style="border-right-color:#a855f7;background:rgba(168,85,247,.08);">
+            <div class="label">إهلاك (تقديري)</div>
+            <div class="value" style="color:#a855f7;">${formatNum(bd.depreciation)} ر.ي</div>
+            <div class="sub">${((bd.depreciation / sum) * 100).toFixed(1)}%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3 class="card-title"><i class="fas fa-balance-scale"></i><span>نقطة التعادل</span></h3></div>
+      <div class="card-body" id="ecBreakEven">
+        <button class="btn btn-primary btn-auto" onclick="loadBreakEven('${escapeAttr(equipId)}')">
+          <i class="fas fa-calculator"></i> احسب نقطة التعادل
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+async function loadBreakEven(equipId) {
+  const res = await apiGet('getEquipmentBreakEven', { equipId });
+  if (!res.success) { showToast('خطأ', 'error'); return; }
+  const d = res.data;
+  document.getElementById('ecBreakEven').innerHTML = `
+    <div class="report-metric">
+      <div class="metric-box" style="border-right-color:var(--info);">
+        <div class="label">التكاليف الثابتة</div>
+        <div class="value">${formatNum(d.fixedCost)} ر.ي</div>
+      </div>
+      <div class="metric-box" style="border-right-color:var(--danger);">
+        <div class="label">التكلفة المتغيرة/ساعة</div>
+        <div class="value" style="color:var(--danger);">${formatNum(d.variablePerHour)} ر.ي</div>
+      </div>
+      <div class="metric-box" style="border-right-color:var(--success);">
+        <div class="label">السعر المقترح/ساعة</div>
+        <div class="value" style="color:var(--success);">${formatNum(d.suggestedPricePerHour)} ر.ي</div>
+      </div>
+      <div class="metric-box" style="border-right-color:var(--primary);">
+        <div class="label">ساعات التعادل</div>
+        <div class="value" style="color:var(--primary);">${d.breakEvenHours} ساعة</div>
+        <div class="sub">≈ ${d.breakEvenMonths} شهر (22 يوم/شهر)</div>
+      </div>
+    </div>
+  `;
+}
+
+async function loadWorkerProductivity() {
+  const res = await apiGet('getWorkerProductivityReport', {
+    from: getValue('wpFrom'), to: getValue('wpTo')
+  });
+  if (!res.success) { showToast('خطأ', 'error'); return; }
+  const d = res.data;
+
+  document.getElementById('wpStats').innerHTML = `
+    <div class="stat-card"><div class="stat-icon green"><i class="fas fa-check"></i></div>
+      <div class="stat-info"><h3>${d.totals.totalPresent}</h3><p>أيام حضور</p></div></div>
+    <div class="stat-card"><div class="stat-icon red"><i class="fas fa-times"></i></div>
+      <div class="stat-info"><h3>${d.totals.totalAbsent}</h3><p>أيام غياب</p></div></div>
+    <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+      <div class="stat-info"><h3>${d.totals.totalOvertime}</h3><p>ساعات إضافية</p></div></div>
+    <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-coins"></i></div>
+      <div class="stat-info"><h3>${formatCurrency(d.totals.totalNetWage)}</h3><p>إجمالي الأجور</p></div></div>
+  `;
+
+  document.getElementById('wpTable').innerHTML = d.workers.length === 0
+    ? '<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">لا توجد بيانات</td></tr>'
+    : d.workers.map((w, i) => `
+      <tr>
+        <td>${i+1}</td>
+        <td><strong>${escapeHtml(w.name)}</strong></td>
+        <td><span class="tag tag-info">${escapeHtml(w.job || '')}</span></td>
+        <td style="color:var(--success);font-weight:700;">${w.presentDays}</td>
+        <td style="color:var(--danger);font-weight:700;">${w.absentDays}</td>
+        <td style="color:var(--warning);font-weight:700;">${w.leaveDays}</td>
+        <td>
+          <span class="tag ${w.attendanceRate >= 90 ? 'tag-success' : w.attendanceRate >= 70 ? 'tag-warning' : 'tag-danger'}">
+            ${w.attendanceRate}%
+          </span>
+        </td>
+        <td>${w.totalHours}</td>
+        <td>${w.overtime}</td>
+        <td style="color:var(--danger);">${w.discountSum ? formatNum(w.discountSum) : '-'}</td>
+        <td style="color:var(--success);">${w.bonusSum ? formatNum(w.bonusSum) : '-'}</td>
+        <td><strong style="color:var(--primary);">${formatNum(w.netWage)}</strong></td>
+      </tr>
+    `).join('');
+}
+
+async function loadAnomalies() {
+  document.getElementById('anomaliesTable').innerHTML =
+    '<tr><td colspan="5" style="text-align:center;padding:30px;"><span class="loader" style="border-top-color:var(--primary);"></span></td></tr>';
+  const res = await apiGet('detectAnomalies');
+  if (!res.success) { showToast('خطأ', 'error'); return; }
+  const d = res;
+
+  document.getElementById('anomalyStats').innerHTML = `
+    <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-list"></i></div>
+      <div class="stat-info"><h3>${d.summary.total}</h3><p>إجمالي</p></div></div>
+    <div class="stat-card"><div class="stat-icon red"><i class="fas fa-fire"></i></div>
+      <div class="stat-info"><h3>${d.summary.high}</h3><p>حرجة</p></div></div>
+    <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-exclamation"></i></div>
+      <div class="stat-info"><h3>${d.summary.medium}</h3><p>متوسطة</p></div></div>
+  `;
+
+  const typeNames = {
+    'DWL_DUPLICATE': 'تكرار سجل عامل',
+    'CE_DUPLICATE': 'تكرار مصروف موحد',
+    'INV_MISMATCH': 'عدم تطابق فاتورة',
+    'ORPHAN_FUEL': 'وقود بسجل معدوم',
+    'NEGATIVE': 'قيمة سالبة',
+    'INVALID_HOURS': 'ساعات غير منطقية'
+  };
+
+  document.getElementById('anomaliesTable').innerHTML = d.issues.length === 0
+    ? '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--success);font-weight:700;">✅ لا توجد مشاكل</td></tr>'
+    : d.issues.map((issue, i) => `
+      <tr class="${issue.severity === 'high' ? 'row-red' : 'row-yellow'}">
+        <td>${i+1}</td>
+        <td>${issue.severity === 'high'
+          ? '<span class="tag tag-danger">🔴 حرجة</span>'
+          : '<span class="tag tag-warning">🟡 متوسطة</span>'}</td>
+        <td><span class="tag tag-info">${escapeHtml(typeNames[issue.type] || issue.type)}</span></td>
+        <td>${escapeHtml(issue.message)}</td>
+        <td style="font-size:12px;color:var(--text-muted);">${escapeHtml((issue.refs || []).join(', '))}</td>
+      </tr>
+    `).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
 // 🎨 الثيم
 // ═══════════════════════════════════════════════════════════
 function toggleTheme() {
@@ -3453,12 +4003,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('menuToggle').addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('open');
   });
+  document.getElementById('anomalyBtn')?.addEventListener('click', () => {
+    navigateTo('anomalies');
+  });
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => navigateTo(item.dataset.page));
   });
 
   if (token) showApp();
-  console.log('🛣️ نظام شركة هندسة الطرقات v5.0');
+  console.log('🛣️ نظام شركة هندسة الطرقات v6.0 - الإصدار المحسّن');
 });
 </script>
 </body>
